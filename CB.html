@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>CB Chandani's Budgeting</title>
+
+<!-- iOS home-screen app behaviour -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="apple-mobile-web-app-title" content="CB Budget" />
+<meta name="theme-color" content="#111111" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23111111'/%3E%3Ctext x='90' y='116' font-family='Georgia,serif' font-size='72' font-weight='bold' fill='white' text-anchor='middle'%3ECB%3C/text%3E%3C/svg%3E" />
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root {
+  --ink: #111111;
+  --paper: #FAFAFA;
+  --slate: #6E6E6E;
+  --mist: #F0F0EE;
+  --line: #E0E0DD;
+  --white: #FFFFFF;
+  --black: #111111;
+  /* chart colors only */
+  --c-spent: #E2A23B;
+  --c-saved: #2E7D5B;
+  --c-over: #C05340;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  font-family: 'Instrument Sans', sans-serif;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- black & white masthead ---------- */
+.masthead {
+  background: var(--black);
+  color: var(--white);
+  padding: calc(env(safe-area-inset-top) + 14px) 20px 14px;
+}
+.masthead-inner { max-width: 480px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+.logo {
+  width: 40px; height: 40px; border: 2px solid var(--white); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fraunces', serif; font-weight: 700; font-size: 17px; letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+.masthead h1 { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; letter-spacing: 0.01em; line-height: 1.2; }
+.masthead small { display: block; font-size: 11px; font-weight: 400; color: #BDBDBD; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 60vh;
+  padding: 14px 20px calc(env(safe-area-inset-bottom) + 96px);
+}
+
+h3 { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; }
+
+.ghost-btn {
+  background: none; border: none; color: var(--ink); text-decoration: underline;
+  font-family: inherit; font-weight: 600; font-size: 13px; cursor: pointer; padding: 0;
+}
+
+.month-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--white); border: 1px solid var(--black); border-radius: 12px; padding: 6px 8px;
+}
+.month-bar button {
+  background: none; border: none; font-size: 20px; color: var(--ink);
+  cursor: pointer; padding: 2px 12px; line-height: 1;
+}
+.month-bar span { font-weight: 600; font-size: 15px; }
+
+.card {
+  background: var(--white); border: 1px solid var(--line); border-radius: 16px;
+  padding: 16px; margin-top: 14px;
+}
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.card-sub { font-size: 12px; color: var(--slate); margin-top: 4px; }
+.card-body { margin-top: 12px; }
+.big-num { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 18px; }
+
+/* ---------- dashboard stat grid ---------- */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.stat { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+.stat label { font-size: 11px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: 0.05em; }
+.stat b { display: block; font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 17px; margin-top: 4px; }
+.stat small { font-size: 11px; color: var(--slate); }
+
+.seg { display: inline-flex; background: var(--mist); border-radius: 9px; padding: 3px; }
+.seg button {
+  border: none; background: none; padding: 5px 12px; border-radius: 7px;
+  font-family: inherit; font-size: 12px; font-weight: 600; color: var(--slate); cursor: pointer;
+}
+.seg button.active { background: var(--black); color: var(--white); }
+
+.donut-wrap { display: flex; align-items: center; gap: 16px; }
+.donut-legend { flex: 1; min-width: 0; }
+.dl-row { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 0; font-size: 13px; gap: 8px; }
+.dl-name { display: inline-flex; align-items: center; gap: 7px; min-width: 0; }
+.dl-name i { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+.dl-name em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dl-val { font-family: 'IBM Plex Mono', monospace; font-size: 12px; white-space: nowrap; }
+.dl-val small { color: var(--slate); font-family: 'Instrument Sans', sans-serif; margin-left: 5px; }
+
+.chart-note { font-size: 11px; color: var(--slate); margin-top: 8px; }
+
+/* ---------- notes ---------- */
+.note-input-row { display: flex; gap: 8px; }
+.note-input-row input[type=text] { flex: 1; }
+.note-item { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--mist); }
+.note-item .bullet { color: var(--slate); line-height: 1.5; }
+.note-item input[type=checkbox] { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--black); }
+.note-text { flex: 1; font-size: 14px; line-height: 1.45; word-break: break-word; }
+.note-text.done { text-decoration: line-through; color: var(--slate); }
+.note-ts { font-size: 11px; color: var(--slate); margin-top: 2px; }
+.del-btn { background: none; border: none; color: var(--slate); font-size: 18px; cursor: pointer; padding: 0 2px; line-height: 1; }
+
+input, select {
+  border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+  font-size: 16px; font-family: inherit; color: var(--ink);
+  background: var(--white); outline: none; min-width: 0; width: 100%;
+  -webkit-appearance: none; appearance: none;
+}
+input:focus, select:focus { border-color: var(--black); }
+input.mono { font-family: 'IBM Plex Mono', monospace; }
+input[type=checkbox] { width: auto; }
+
+.row2 { display: flex; gap: 8px; margin-top: 8px; }
+.row2:first-child { margin-top: 0; }
+
+.primary-btn {
+  background: var(--black); color: var(--white); border: none; border-radius: 10px;
+  padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
+  font-family: inherit; width: 100%; margin-top: 10px;
+}
+.primary-btn:active { background: #333; }
+.quiet-btn { background: var(--mist); color: var(--ink); }
+
+.cat-row { margin-bottom: 12px; }
+.cat-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; }
+.cat-name { display: inline-flex; align-items: center; gap: 8px; font-weight: 500; }
+.cat-name i { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
+.cat-amt { font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 13px; }
+.cat-amt small { color: var(--slate); font-weight: 400; margin-left: 6px; font-size: 12px; font-family: 'Instrument Sans', sans-serif; }
+.cat-bar { height: 6px; background: var(--mist); border-radius: 3px; margin-top: 5px; overflow: hidden; }
+.cat-bar > div { height: 100%; border-radius: 3px; transition: width .3s ease; }
+.cat-budget { font-size: 11px; color: var(--slate); margin-top: 3px; }
+.cat-budget.over { color: var(--c-over); }
+
+.mode-row, .entry-row, .bucket-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid var(--mist); gap: 10px;
+}
+.mode-row span:last-child, .entry-amt { font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
+.mode-row small { color: var(--slate); margin-left: 6px; font-size: 12px; font-family: 'Instrument Sans', sans-serif; }
+
+.entry-main { font-size: 14px; font-weight: 500; }
+.entry-main small { color: var(--slate); font-weight: 400; }
+.entry-meta { font-size: 12px; color: var(--slate); }
+
+.bucket-row input { width: 120px; text-align: right; }
+.bucket-label { font-size: 14px; font-weight: 500; }
+.bucket-sub { font-size: 11px; color: var(--slate); }
+
+.empty { font-size: 13px; color: var(--slate); }
+
+/* ---------- targets ---------- */
+.target-row { padding: 10px 0; border-bottom: 1px solid var(--mist); }
+.target-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.target-name { font-size: 14px; font-weight: 500; flex: 1; }
+.target-name small { display: block; font-weight: 400; font-size: 11px; color: var(--slate); }
+.pct-input { display: flex; align-items: center; gap: 5px; }
+.pct-input input { width: 62px; text-align: right; padding: 8px 10px; }
+.pct-input span { font-size: 13px; color: var(--slate); }
+.target-detail { display: flex; justify-content: space-between; font-size: 12px; color: var(--slate); margin-top: 6px; }
+.target-detail b { font-family: 'IBM Plex Mono', monospace; color: var(--ink); font-weight: 500; }
+
+.networth {
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-top: 2px solid var(--black); margin-top: 8px; padding-top: 10px;
+}
+.networth span { font-weight: 600; font-size: 14px; }
+.networth b { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600; }
+
+.map-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 5px 0; }
+.map-row span { font-size: 14px; }
+.map-row select { width: 150px; padding: 8px 10px; font-size: 14px; }
+
+.budget-line { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 5px 0; }
+.budget-line span { font-size: 14px; }
+.budget-line input { width: 110px; text-align: right; }
+
+.tabs {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  max-width: 480px; margin: 0 auto; display: flex;
+  background: var(--white); border-top: 1px solid var(--line);
+  box-shadow: 0 -6px 24px rgba(17,17,17,0.06);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tabs button {
+  flex: 1; padding: 15px 2px 17px; border: none; cursor: pointer;
+  background: none; font-family: inherit; font-weight: 600; font-size: 12.5px;
+  color: var(--slate); border-top: 2px solid transparent; margin-top: -1px;
+}
+.tabs button.active { color: var(--ink); border-top-color: var(--black); }
+
+.field-label {
+  display: block; font-size: 12px; font-weight: 600; color: var(--slate);
+  text-transform: uppercase; letter-spacing: 0.04em; margin: 14px 0 6px;
+}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="logo">CB</div>
+    <div>
+      <h1>Chandani's Budgeting</h1>
+      <small>Money, managed monthly</small>
+    </div>
+  </div>
+</div>
+
+<div id="app"></div>
+
+<script>
+"use strict";
+
+/* ---------------- constants ---------------- */
+const CAT_COLORS = ["#2E7D5B","#E2A23B","#5B7DB5","#C05340","#8A6FB2","#3E9C8B","#C77E4A","#7D8F3E","#B25B8A","#4A8FC7","#A08050","#5E9EA0"];
+const DEFAULT_CATEGORIES = ["Rent","Groceries","Utilities","Help Salaries","Shopping","Eating Out","Travel","Subscriptions","Health","Personal Care","Insurance","Miscellaneous"];
+const PAYMENT_MODES = ["UPI","Credit Card","Debit Card","Cash","Net Banking"];
+const SAVING_BUCKETS = [
+  { key: "bank", label: "Cash in Bank" },
+  { key: "mf", label: "Mutual Funds" },
+  { key: "shares", label: "Shares" },
+  { key: "rd", label: "RD" },
+  { key: "fd", label: "FD" },
+];
+const GROUPS = [
+  { key: "living", label: "Living expenses", hint: "Rent, groceries, utilities, essentials" },
+  { key: "leisure", label: "Travelling / Leisure", hint: "Travel, eating out, shopping" },
+  { key: "support", label: "Support expenses", hint: "Help salaries and support you give" },
+];
+const GROUP_COLORS = { living: "#5B7DB5", leisure: "#E2A23B", support: "#8A6FB2", savings: "#2E7D5B" };
+const DEFAULT_GROUP_MAP = {
+  "Rent": "living", "Groceries": "living", "Utilities": "living", "Subscriptions": "living",
+  "Health": "living", "Personal Care": "living", "Insurance": "living", "Miscellaneous": "living",
+  "Travel": "leisure", "Eating Out": "leisure", "Shopping": "leisure",
+  "Help Salaries": "support",
+};
+const STORAGE_KEY = "cb-budget-data-v1";
+const OLD_KEY = "ledger-data-v1";
+
+/* ---------------- storage ---------------- */
+let memStore = null;
+function loadData() {
+  try {
+    let raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(OLD_KEY);
+    if (raw) return Object.assign(emptyData(), JSON.parse(raw));
+  } catch (e) { /* unavailable in preview */ }
+  return memStore || emptyData();
+}
+function saveData(d) {
+  memStore = d;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+  catch (e) { /* keep in memory */ }
+}
+function emptyData() {
+  return {
+    salary: 0, salaryByMonth: {},
+    categories: DEFAULT_CATEGORIES.slice(),
+    budgets: {}, expenses: {}, savings: {}, corpus: {}, notes: [],
+    targets: {},        /* { living, leisure, support, savingsAnnual } — % of salary */
+    groupMap: {},       /* { category: groupKey } */
+    assets: {},         /* { housing, gold, property, housingTarget, emergencyTarget } */
+  };
+}
+
+/* ---------------- helpers ---------------- */
+const inr = n => "₹" + (Number(n) || 0).toLocaleString("en-IN", { maximumFractionDigits: 0 });
+const inrShort = n => {
+  n = Number(n) || 0;
+  if (n >= 1e7) return "₹" + (n / 1e7).toFixed(1).replace(/\.0$/, "") + "Cr";
+  if (n >= 1e5) return "₹" + (n / 1e5).toFixed(1).replace(/\.0$/, "") + "L";
+  if (n >= 1e3) return "₹" + (n / 1e3).toFixed(0) + "k";
+  return "₹" + n;
+};
+const pctOf = (part, whole) => (!whole || whole <= 0) ? "" : ((part / whole) * 100).toFixed(1) + "%";
+const ymNow = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"); };
+const monthLabel = ym => { const [y, m] = ym.split("-").map(Number); return new Date(y, m - 1, 1).toLocaleString("en-IN", { month: "long", year: "numeric" }); };
+const monthShort = ym => { const [y, m] = ym.split("-").map(Number); return new Date(y, m - 1, 1).toLocaleString("en-IN", { month: "short" }); };
+const shiftMonth = (ym, delta) => { const [y, m] = ym.split("-").map(Number); const d = new Date(y, m - 1 + delta, 1); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"); };
+const yearOf = ym => ym.split("-")[0];
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmtTs = iso => new Date(iso).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" });
+
+/* ---------------- state ---------------- */
+let data = loadData();
+let state = { tab: "dashboard", ym: ymNow(), showAllEntries: false, donutRange: "month", noteType: "todo", targetRange: "month" };
+let draft = { amount: "", category: data.categories[0] || "Miscellaneous", mode: "UPI", note: "" };
+
+function commit() { saveData(data); render(); }
+
+/* ---------------- derived ---------------- */
+function expensesFor(ym) { return data.expenses[ym] || []; }
+function monthExpenses() { return expensesFor(state.ym); }
+function monthSavings() { return data.savings[state.ym] || {}; }
+function spentIn(ym) { return expensesFor(ym).reduce((s, e) => s + e.amount, 0); }
+function savedIn(ym) { const v = data.savings[ym] || {}; return SAVING_BUCKETS.reduce((s, b) => s + (Number(v[b.key]) || 0), 0); }
+function spentTotal() { return spentIn(state.ym); }
+function savedTotal() { return savedIn(state.ym); }
+function catColor(cat) { const i = data.categories.indexOf(cat); return CAT_COLORS[(i < 0 ? 0 : i) % CAT_COLORS.length]; }
+function groupOf(cat) { return (data.groupMap && data.groupMap[cat]) || DEFAULT_GROUP_MAP[cat] || "living"; }
+
+function effSalary(ym) {
+  const hist = data.salaryByMonth || {};
+  const keys = Object.keys(hist).filter(k => k <= ym).sort();
+  if (keys.length) return Number(hist[keys[keys.length - 1]]) || 0;
+  return Number(data.salary) || 0;
+}
+
+function yearMonths(year) {
+  const now = ymNow();
+  const out = [];
+  for (let m = 1; m <= 12; m++) {
+    const ym = year + "-" + String(m).padStart(2, "0");
+    if (ym > now) break;
+    out.push(ym);
+  }
+  return out;
+}
+
+function annualStats(year) {
+  const months = yearMonths(year);
+  let earned = 0, spent = 0, saved = 0;
+  const byCat = {};
+  for (const ym of months) {
+    earned += effSalary(ym);
+    spent += spentIn(ym);
+    saved += savedIn(ym);
+    for (const e of expensesFor(ym)) byCat[e.category] = (byCat[e.category] || 0) + e.amount;
+  }
+  return { earned, spent, saved, byCat, monthCount: months.length };
+}
+
+function groupSpend(range) {
+  /* returns { living, leisure, support } spend for month or year */
+  const out = { living: 0, leisure: 0, support: 0 };
+  const months = range === "month" ? [state.ym] : yearMonths(yearOf(state.ym));
+  for (const ym of months) {
+    for (const e of expensesFor(ym)) out[groupOf(e.category)] += e.amount;
+  }
+  return out;
+}
+
+function annualSavingsByBucket(year) {
+  const t = {}; SAVING_BUCKETS.forEach(b => t[b.key] = 0);
+  for (const [m, vals] of Object.entries(data.savings)) {
+    if (yearOf(m) !== year) continue;
+    SAVING_BUCKETS.forEach(b => t[b.key] += Number(vals[b.key]) || 0);
+  }
+  return t;
+}
+
+/* ---------------- SVG charts ---------------- */
+function donutSVG(segs) {
+  const total = segs.reduce((s, x) => s + x.value, 0);
+  if (!total) return "";
+  const r = 50, cx = 75, cy = 75, circ = 2 * Math.PI * r;
+  let off = 0, circles = "";
+  segs.forEach(s => {
+    const frac = s.value / total;
+    circles += `<circle r="${r}" cx="${cx}" cy="${cy}" fill="none" stroke="${s.color}" stroke-width="24"
+      stroke-dasharray="${(frac * circ).toFixed(2)} ${circ.toFixed(2)}" stroke-dashoffset="${(-off * circ).toFixed(2)}"
+      transform="rotate(-90 ${cx} ${cy})"/>`;
+    off += frac;
+  });
+  return `<svg viewBox="0 0 150 150" width="140" height="140" style="flex-shrink:0">
+    ${circles}
+    <text x="75" y="71" text-anchor="middle" font-size="11" fill="#6E6E6E" font-family="Instrument Sans, sans-serif">Total</text>
+    <text x="75" y="89" text-anchor="middle" font-size="14" font-weight="600" fill="#111" font-family="IBM Plex Mono, monospace">${inrShort(total)}</text>
+  </svg>`;
+}
+
+function trendBarsSVG() {
+  const months = [];
+  for (let i = 11; i >= 0; i--) months.push(shiftMonth(state.ym, -i));
+  const series = months.map(ym => ({ ym, spent: spentIn(ym), saved: savedIn(ym), salary: effSalary(ym) }));
+  const max = Math.max(1, ...series.map(s => Math.max(s.spent, s.saved, s.salary)));
+  const W = 340, H = 150, padL = 6, padB = 20, chartH = H - padB - 8;
+  const slot = (W - padL * 2) / 12, barW = Math.min(9, slot / 3);
+  let out = "";
+  series.forEach((s, i) => {
+    const x = padL + i * slot + slot / 2;
+    const hSpent = s.spent / max * chartH, hSaved = s.saved / max * chartH;
+    const ySal = 8 + chartH - (s.salary / max * chartH);
+    out += `<rect x="${(x - barW - 1).toFixed(1)}" y="${(8 + chartH - hSpent).toFixed(1)}" width="${barW}" height="${hSpent.toFixed(1)}" rx="2" fill="var(--c-spent)"/>`;
+    out += `<rect x="${(x + 1).toFixed(1)}" y="${(8 + chartH - hSaved).toFixed(1)}" width="${barW}" height="${hSaved.toFixed(1)}" rx="2" fill="var(--c-saved)"/>`;
+    if (s.salary > 0) out += `<line x1="${(x - barW - 3).toFixed(1)}" x2="${(x + barW + 3).toFixed(1)}" y1="${ySal.toFixed(1)}" y2="${ySal.toFixed(1)}" stroke="#111" stroke-width="1.4"/>`;
+    if (i % 2 === 0) out += `<text x="${x.toFixed(1)}" y="${H - 5}" text-anchor="middle" font-size="9" fill="#6E6E6E" font-family="Instrument Sans, sans-serif">${monthShort(s.ym)}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">${out}</svg>`;
+}
+
+/* ---------------- actions ---------------- */
+window.A = {
+  setTab(t) { state.tab = t; render(); },
+  prevMonth() { state.ym = shiftMonth(state.ym, -1); state.showAllEntries = false; render(); },
+  nextMonth() { state.ym = shiftMonth(state.ym, 1); state.showAllEntries = false; render(); },
+  toggleEntries() { state.showAllEntries = !state.showAllEntries; render(); },
+  setDonutRange(r) { state.donutRange = r; render(); },
+  setTargetRange(r) { state.targetRange = r; render(); },
+
+  addExpense() {
+    const amt = parseFloat(document.getElementById("amt-in").value);
+    const category = document.getElementById("cat-in").value;
+    const mode = document.getElementById("mode-in").value;
+    const note = document.getElementById("note-in").value.trim();
+    if (!amt || amt <= 0) return;
+    const list = data.expenses[state.ym] || [];
+    data.expenses[state.ym] = [{ id: uid(), amount: amt, category, mode, note, date: new Date().toISOString().slice(0, 10) }].concat(list);
+    draft = { amount: "", category, mode, note: "" };
+    commit();
+  },
+
+  deleteExpense(id) {
+    data.expenses[state.ym] = monthExpenses().filter(e => e.id !== id);
+    commit();
+  },
+
+  setBucket(key, val) {
+    if (!data.savings[state.ym]) data.savings[state.ym] = {};
+    data.savings[state.ym][key] = val === "" ? "" : (parseFloat(val) || 0);
+    saveData(data);
+  },
+  setCorpus(key, val) {
+    data.corpus[key] = val === "" ? "" : (parseFloat(val) || 0);
+    saveData(data);
+  },
+
+  setNoteType(t) { state.noteType = t; render(); },
+  addNote() {
+    const el = document.getElementById("note-new");
+    const text = el.value.trim();
+    if (!text) return;
+    data.notes = [{ id: uid(), text, type: state.noteType, done: false, ts: new Date().toISOString() }].concat(data.notes || []);
+    commit();
+  },
+  toggleNote(id) {
+    const n = (data.notes || []).find(n => n.id === id);
+    if (n) { n.done = !n.done; commit(); }
+  },
+  deleteNote(id) {
+    data.notes = (data.notes || []).filter(n => n.id !== id);
+    commit();
+  },
+
+  /* ---- budget tab ---- */
+  saveSalary() {
+    const salary = parseFloat(document.getElementById("salary-in").value) || 0;
+    data.salary = salary;
+    if (!data.salaryByMonth) data.salaryByMonth = {};
+    data.salaryByMonth[state.ym] = salary;
+    commit();
+  },
+  setTarget(key, val) {
+    if (!data.targets) data.targets = {};
+    data.targets[key] = val === "" ? "" : (parseFloat(val) || 0);
+    saveData(data);
+  },
+  setAsset(key, val) {
+    if (!data.assets) data.assets = {};
+    data.assets[key] = val === "" ? "" : (parseFloat(val) || 0);
+    saveData(data);
+  },
+  setGroupFor(cat, group) {
+    if (!data.groupMap) data.groupMap = {};
+    data.groupMap[cat] = group;
+    commit();
+  },
+  setBudget(cat, val) {
+    if (!data.budgets) data.budgets = {};
+    const n = parseFloat(val);
+    if (n > 0) data.budgets[cat] = n; else delete data.budgets[cat];
+    saveData(data);
+  },
+  refresh() { render(); },
+
+  addCategory() {
+    const el = document.getElementById("newcat-in");
+    const c = el.value.trim();
+    if (!c || data.categories.includes(c)) return;
+    data.categories.push(c);
+    commit();
+  },
+
+  exportCSV() {
+    let rows = ["type,month,date,category_or_bucket,mode,note,amount"];
+    for (const [ym, list] of Object.entries(data.expenses)) {
+      for (const e of list) rows.push(["expense", ym, e.date, e.category, e.mode, '"' + (e.note || "").replace(/"/g, '""') + '"', e.amount].join(","));
+    }
+    for (const [ym, vals] of Object.entries(data.savings)) {
+      for (const b of SAVING_BUCKETS) {
+        const v = Number(vals[b.key]) || 0;
+        if (v > 0) rows.push(["saving", ym, "", b.label, "", "", v].join(","));
+      }
+    }
+    const blob = new Blob([rows.join("\n")], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "cb-budget-backup-" + new Date().toISOString().slice(0, 10) + ".csv";
+    a.click();
+  },
+};
+
+/* ---------------- renderers ---------------- */
+function renderDashboard() {
+  const year = yearOf(state.ym);
+  const A_ = annualStats(year);
+  const salary = effSalary(state.ym);
+  const spent = spentTotal(), saved = savedTotal();
+  const corpusTotal = SAVING_BUCKETS.reduce((s, b) => s + (Number(data.corpus[b.key]) || 0), 0);
+  const isCurrentYear = year === yearOf(ymNow());
+  const ytd = isCurrentYear ? " (YTD)" : "";
+
+  const byCat = state.donutRange === "month"
+    ? monthExpenses().reduce((m, e) => (m[e.category] = (m[e.category] || 0) + e.amount, m), {})
+    : A_.byCat;
+  const catSegs = Object.entries(byCat).sort((a, b) => b[1] - a[1])
+    .map(([label, value]) => ({ label, value, color: catColor(label) }));
+  const catTotal = catSegs.reduce((s, x) => s + x.value, 0);
+  const catLegend = catSegs.slice(0, 8).map(s => `
+    <div class="dl-row">
+      <span class="dl-name"><i style="background:${s.color}"></i><em>${esc(s.label)}</em></span>
+      <span class="dl-val">${inrShort(s.value)}<small>${pctOf(s.value, catTotal)}</small></span>
+    </div>`).join("");
+
+  const savTotals = annualSavingsByBucket(year);
+  const savSegs = SAVING_BUCKETS
+    .map((b, i) => ({ label: b.label, value: savTotals[b.key], color: CAT_COLORS[i % CAT_COLORS.length] }))
+    .filter(s => s.value > 0);
+  const savLegend = savSegs.map(s => `
+    <div class="dl-row">
+      <span class="dl-name"><i style="background:${s.color}"></i><em>${esc(s.label)}</em></span>
+      <span class="dl-val">${inrShort(s.value)}<small>${pctOf(s.value, A_.saved)}</small></span>
+    </div>`).join("");
+
+  const notes = data.notes || [];
+  const noteItems = notes.map(n => `
+    <div class="note-item">
+      ${n.type === "todo"
+        ? `<input type="checkbox" ${n.done ? "checked" : ""} onchange="A.toggleNote('${n.id}')" />`
+        : `<span class="bullet">•</span>`}
+      <div style="flex:1">
+        <div class="note-text ${n.done ? "done" : ""}">${esc(n.text)}</div>
+        <div class="note-ts">${fmtTs(n.ts)}</div>
+      </div>
+      <button class="del-btn" onclick="A.deleteNote('${n.id}')" aria-label="Delete note">×</button>
+    </div>`).join("");
+
+  return `
+    <div class="stat-grid">
+      <div class="stat"><label>Current savings</label><b>${inr(corpusTotal)}</b><small>across all buckets</small></div>
+      <div class="stat"><label>Earned ${monthShort(state.ym)}</label><b>${inr(salary)}</b><small>${year}${ytd}: ${inrShort(A_.earned)}</small></div>
+      <div class="stat"><label>Spent ${monthShort(state.ym)}</label><b>${inr(spent)}</b><small>${year}${ytd}: ${inrShort(A_.spent)}</small></div>
+      <div class="stat"><label>Saved ${monthShort(state.ym)}</label><b>${inr(saved)}</b><small>${year}${ytd}: ${inrShort(A_.saved)}</small></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Month by month</h3></div>
+      <div class="card-sub">Spent vs saved, last 12 months · black tick = salary</div>
+      <div class="card-body">
+        ${trendBarsSVG()}
+        <div class="chart-note"><span style="color:var(--c-spent)">■</span> Spent &nbsp; <span style="color:var(--c-saved)">■</span> Saved</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h3>Where the money goes</h3>
+        <span class="seg">
+          <button class="${state.donutRange === "month" ? "active" : ""}" onclick="A.setDonutRange('month')">${monthShort(state.ym)}</button>
+          <button class="${state.donutRange === "year" ? "active" : ""}" onclick="A.setDonutRange('year')">${year}</button>
+        </span>
+      </div>
+      <div class="card-body">
+        ${catSegs.length ? `<div class="donut-wrap">${donutSVG(catSegs)}<div class="donut-legend">${catLegend}</div></div>` : '<p class="empty">No expenses logged for this period yet.</p>'}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>${year} at a glance${ytd}</h3></div>
+      <div class="card-body">
+        <div class="mode-row"><span>Earned</span><span>${inr(A_.earned)}</span></div>
+        <div class="mode-row"><span>Spent</span><span>${inr(A_.spent)}<small>${pctOf(A_.spent, A_.earned)} of earnings</small></span></div>
+        <div class="mode-row"><span>Saved</span><span>${inr(A_.saved)}<small>${pctOf(A_.saved, A_.earned)} of earnings</small></span></div>
+        <div class="mode-row"><span>Unaccounted</span><span>${inr(Math.max(0, A_.earned - A_.spent - A_.saved))}</span></div>
+      </div>
+    </div>
+
+    ${savSegs.length ? `
+    <div class="card">
+      <div class="card-head"><h3>Savings mix — ${year}</h3></div>
+      <div class="card-sub">Where your contributions went this year</div>
+      <div class="card-body"><div class="donut-wrap">${donutSVG(savSegs)}<div class="donut-legend">${savLegend}</div></div></div>
+    </div>` : ""}
+
+    <div class="card">
+      <div class="card-head">
+        <h3>Notes &amp; to-dos</h3>
+        <span class="seg">
+          <button class="${state.noteType === "todo" ? "active" : ""}" onclick="A.setNoteType('todo')">To-do</button>
+          <button class="${state.noteType === "note" ? "active" : ""}" onclick="A.setNoteType('note')">Note</button>
+        </span>
+      </div>
+      <div class="card-body">
+        <div class="note-input-row">
+          <input type="text" id="note-new" placeholder="${state.noteType === "todo" ? "Add a to-do…" : "Add a note…"}" />
+          <button class="primary-btn" style="width:auto;margin-top:0" onclick="A.addNote()">Add</button>
+        </div>
+        <div style="margin-top:10px">
+          ${noteItems || '<p class="empty">Jot reminders here — pay rent, review SIP, chase a refund. Each one gets a timestamp.</p>'}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Backup</h3></div>
+      <div class="card-sub">Your data lives on this device. Download a CSV copy any time.</div>
+      <div class="card-body"><button class="primary-btn quiet-btn" style="margin-top:0" onclick="A.exportCSV()">Download CSV backup</button></div>
+    </div>`;
+}
+
+function renderExpenses() {
+  const expenses = monthExpenses();
+  const total = spentTotal();
+  const salary = effSalary(state.ym);
+
+  const byCat = {}, byMode = {};
+  expenses.forEach(e => {
+    byCat[e.category] = (byCat[e.category] || 0) + e.amount;
+    byMode[e.mode] = (byMode[e.mode] || 0) + e.amount;
+  });
+
+  const catRows = Object.entries(byCat).sort((a, b) => b[1] - a[1]).map(([cat, amt]) => {
+    const budget = data.budgets[cat];
+    const over = budget && amt > budget;
+    const width = budget ? Math.min(amt / budget * 100, 100) : Math.min(amt / (total || 1) * 100, 100);
+    return `
+      <div class="cat-row">
+        <div class="cat-top">
+          <span class="cat-name"><i style="background:${catColor(cat)}"></i>${esc(cat)}</span>
+          <span class="cat-amt" style="${over ? "color:var(--c-over)" : ""}">${inr(amt)}${salary > 0 ? `<small>${pctOf(amt, salary)}</small>` : ""}</span>
+        </div>
+        <div class="cat-bar"><div style="width:${width}%;background:${over ? "var(--c-over)" : catColor(cat)}"></div></div>
+        ${budget ? `<div class="cat-budget ${over ? "over" : ""}">${over ? "Over budget by " + inr(amt - budget) : inr(budget - amt) + " left of " + inr(budget) + " budget"}</div>` : ""}
+      </div>`;
+  }).join("");
+
+  const modeRows = Object.entries(byMode).sort((a, b) => b[1] - a[1]).map(([m, amt]) =>
+    `<div class="mode-row"><span>${esc(m)}</span><span>${inr(amt)}<small>${pctOf(amt, total)}</small></span></div>`
+  ).join("");
+
+  const visible = state.showAllEntries ? expenses : expenses.slice(0, 8);
+  const entryRows = visible.map(e => `
+    <div class="entry-row">
+      <div>
+        <div class="entry-main">${esc(e.category)}${e.note ? `<small> · ${esc(e.note)}</small>` : ""}</div>
+        <div class="entry-meta">${e.date} · ${esc(e.mode)}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="entry-amt">${inr(e.amount)}</span>
+        <button class="del-btn" onclick="A.deleteExpense('${e.id}')" aria-label="Delete entry">×</button>
+      </div>
+    </div>`).join("");
+
+  return `
+    <div class="card">
+      <div class="card-head"><h3>Add an expense</h3></div>
+      <div class="card-body">
+        <div class="row2">
+          <input id="amt-in" class="mono" type="number" inputmode="decimal" placeholder="Amount" value="${esc(draft.amount)}" />
+          <select id="cat-in">${data.categories.map(c => `<option ${c === draft.category ? "selected" : ""}>${esc(c)}</option>`).join("")}</select>
+        </div>
+        <div class="row2">
+          <select id="mode-in">${PAYMENT_MODES.map(m => `<option ${m === draft.mode ? "selected" : ""}>${esc(m)}</option>`).join("")}</select>
+          <input id="note-in" placeholder="Note (optional)" value="${esc(draft.note)}" />
+        </div>
+        <button class="primary-btn" onclick="A.addExpense()">Add to ${monthLabel(state.ym).split(" ")[0]}</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Spent this month</h3><span class="big-num">${inr(total)}</span></div>
+      <div class="card-sub">${salary > 0 ? pctOf(total, salary) + " of salary" : "Set your salary in the Budget tab to see % of income"}</div>
+      <div class="card-body">
+        ${catRows || '<p class="empty">Nothing logged yet this month. Add your first expense above.</p>'}
+      </div>
+    </div>
+
+    ${modeRows ? `<div class="card"><div class="card-head"><h3>How you paid</h3></div><div class="card-body">${modeRows}</div></div>` : ""}
+
+    ${expenses.length ? `
+      <div class="card">
+        <div class="card-head"><h3>Entries (${expenses.length})</h3></div>
+        <div class="card-body">
+          ${entryRows}
+          ${expenses.length > 8 ? `<button class="ghost-btn" style="margin-top:10px" onclick="A.toggleEntries()">${state.showAllEntries ? "Show fewer" : "Show all " + expenses.length}</button>` : ""}
+        </div>
+      </div>` : ""}`;
+}
+
+function renderSavings() {
+  const ms = monthSavings();
+  const salary = effSalary(state.ym);
+  const year = yearOf(state.ym);
+  const annual = annualSavingsByBucket(year);
+  const annualGrand = Object.values(annual).reduce((a, b) => a + b, 0);
+  const corpusTotal = SAVING_BUCKETS.reduce((s, b) => s + (Number(data.corpus[b.key]) || 0), 0);
+
+  const contribRows = SAVING_BUCKETS.map(b => {
+    const v = ms[b.key];
+    const has = Number(v) > 0;
+    return `
+      <div class="bucket-row">
+        <div style="flex:1">
+          <div class="bucket-label">${b.label}</div>
+          <div class="bucket-sub">${salary > 0 && has ? pctOf(Number(v), salary) + " of salary · " : ""}${year}: ${inr(annual[b.key])}</div>
+        </div>
+        <input class="mono" type="number" inputmode="decimal" placeholder="0" value="${v ?? ""}"
+          oninput="A.setBucket('${b.key}', this.value)" onchange="A.refresh()" />
+      </div>`;
+  }).join("");
+
+  const corpusRows = SAVING_BUCKETS.map(b => `
+    <div class="bucket-row">
+      <span class="bucket-label" style="font-weight:400">${b.label}</span>
+      <input class="mono" type="number" inputmode="decimal" placeholder="0" value="${data.corpus[b.key] ?? ""}"
+        oninput="A.setCorpus('${b.key}', this.value)" onchange="A.refresh()" style="width:130px" />
+    </div>`).join("");
+
+  return `
+    <div class="card">
+      <div class="card-head"><h3>Saved this month</h3><span class="big-num">${inr(savedTotal())}</span></div>
+      <div class="card-sub">${salary > 0 ? pctOf(savedTotal(), salary) + " of salary going into savings" : "Set your salary in the Budget tab to see savings rate"}</div>
+      <div class="card-body" style="font-size:13px;color:var(--slate)">
+        ${year} total so far: <b style="font-family:'IBM Plex Mono',monospace;color:var(--ink)">${inr(annualGrand)}</b>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Contributions — ${monthLabel(state.ym)}</h3></div>
+      <div class="card-sub">What you put in this month, per bucket. Saves as you type.</div>
+      <div class="card-body">${contribRows}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Where you stand</h3>${corpusTotal > 0 ? `<span class="big-num" style="font-size:16px">${inr(corpusTotal)}</span>` : ""}</div>
+      <div class="card-sub">Current value of each bucket — update whenever you check your accounts. Feeds Corpus Planning in the Budget tab.</div>
+      <div class="card-body">${corpusRows}</div>
+    </div>`;
+}
+
+function renderBudget() {
+  const salary = effSalary(state.ym);
+  const year = yearOf(state.ym);
+  const A_ = annualStats(year);
+  const range = state.targetRange;
+  const isMonth = range === "month";
+  const income = isMonth ? salary : A_.earned;
+  const incomeLabel = isMonth ? monthLabel(state.ym) : year + (year === yearOf(ymNow()) ? " (YTD)" : "");
+  const gs = groupSpend(range);
+  const t = data.targets || {};
+
+  const groupRows = GROUPS.map(g => {
+    const target = Number(t[g.key]) || 0;
+    const targetAmt = income * target / 100;
+    const actual = gs[g.key];
+    const actualPct = income > 0 ? actual / income * 100 : 0;
+    const over = target > 0 && actual > targetAmt;
+    const width = target > 0 ? Math.min(actual / targetAmt * 100, 100) : 0;
+    return `
+      <div class="target-row">
+        <div class="target-top">
+          <div class="target-name">${g.label}<small>${g.hint}</small></div>
+          <div class="pct-input">
+            <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${t[g.key] ?? ""}"
+              oninput="A.setTarget('${g.key}', this.value)" onchange="A.refresh()" />
+            <span>%</span>
+          </div>
+        </div>
+        ${target > 0 ? `
+          <div class="cat-bar" style="margin-top:8px"><div style="width:${width}%;background:${over ? "var(--c-over)" : GROUP_COLORS[g.key]}"></div></div>
+          <div class="target-detail">
+            <span>Actual: <b>${inr(actual)}</b> (${actualPct.toFixed(1)}%)</span>
+            <span style="${over ? "color:var(--c-over)" : ""}">${over ? "Over by " + inr(actual - targetAmt) : "Target: " + inr(targetAmt)}</span>
+          </div>` : `
+          <div class="target-detail"><span>Actual: <b>${inr(actual)}</b>${income > 0 ? " (" + actualPct.toFixed(1) + "% of income)" : ""}</span><span>Set a target %</span></div>`}
+      </div>`;
+  }).join("");
+
+  /* savings target — annual by definition */
+  const savTarget = Number(t.savingsAnnual) || 0;
+  const savTargetAmt = A_.earned * savTarget / 100;
+  const savActual = A_.saved;
+  const savShort = savTarget > 0 && savActual < savTargetAmt;
+  const savWidth = savTarget > 0 ? Math.min(savActual / savTargetAmt * 100, 100) : 0;
+  const savRow = `
+    <div class="target-row" style="border-bottom:none">
+      <div class="target-top">
+        <div class="target-name">Savings target<small>Annual — % of the year's earnings you want saved</small></div>
+        <div class="pct-input">
+          <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${t.savingsAnnual ?? ""}"
+            oninput="A.setTarget('savingsAnnual', this.value)" onchange="A.refresh()" />
+          <span>%</span>
+        </div>
+      </div>
+      ${savTarget > 0 ? `
+        <div class="cat-bar" style="margin-top:8px"><div style="width:${savWidth}%;background:${GROUP_COLORS.savings}"></div></div>
+        <div class="target-detail">
+          <span>Saved in ${year}: <b>${inr(savActual)}</b> (${pctOf(savActual, A_.earned) || "0%"})</span>
+          <span>${savShort ? inr(savTargetAmt - savActual) + " to go" : "Target met ✓"}</span>
+        </div>` : `
+        <div class="target-detail"><span>Saved in ${year}: <b>${inr(savActual)}</b></span><span>Set a target %</span></div>`}
+    </div>`;
+
+  /* corpus planning */
+  const a = data.assets || {};
+  const c = data.corpus || {};
+  const emergency = Number(c.bank) || 0;
+  const savingsCorpus = (Number(c.mf) || 0) + (Number(c.shares) || 0) + (Number(c.rd) || 0) + (Number(c.fd) || 0);
+  const housing = Number(a.housing) || 0;
+  const gold = Number(a.gold) || 0;
+  const property = Number(a.property) || 0;
+  const netWorth = emergency + savingsCorpus + housing + gold + property;
+
+  const corpusRow = (label, sub, valueHtml) => `
+    <div class="bucket-row">
+      <div style="flex:1"><div class="bucket-label">${label}</div>${sub ? `<div class="bucket-sub">${sub}</div>` : ""}</div>
+      ${valueHtml}
+    </div>`;
+
+  const fundBar = (val, target) => {
+    if (!(Number(target) > 0)) return "";
+    const w = Math.min(val / target * 100, 100);
+    return `<div class="cat-bar" style="margin:2px 0 8px"><div style="width:${w}%;background:${GROUP_COLORS.savings}"></div></div>
+      <div class="bucket-sub" style="margin-bottom:8px">${val >= target ? "Goal reached ✓" : inr(target - val) + " to go of " + inr(target) + " goal"}</div>`;
+  };
+
+  const budgetLines = data.categories.map((c2, i) => `
+    <div class="budget-line">
+      <span>${esc(c2)}</span>
+      <input id="budget-${i}" class="mono" type="number" inputmode="decimal" placeholder="—" value="${data.budgets[c2] ?? ""}"
+        oninput="A.setBudget('${esc(c2)}', this.value)" onchange="A.refresh()" />
+    </div>`).join("");
+
+  const mapRows = data.categories.map(c2 => `
+    <div class="map-row">
+      <span>${esc(c2)}</span>
+      <select onchange="A.setGroupFor('${esc(c2)}', this.value)">
+        ${GROUPS.map(g => `<option value="${g.key}" ${groupOf(c2) === g.key ? "selected" : ""}>${g.label}</option>`).join("")}
+      </select>
+    </div>`).join("");
+
+  return `
+    <div class="card">
+      <div class="card-head"><h3>Salary</h3></div>
+      <div class="card-sub">In-hand monthly salary, effective from ${monthLabel(state.ym)} onwards. Past months keep their old figure.</div>
+      <div class="card-body">
+        <div class="row2">
+          <input id="salary-in" class="mono" type="number" inputmode="decimal" placeholder="e.g. 300000" value="${salary || ""}" />
+          <button class="primary-btn" style="width:auto;margin-top:0" onclick="A.saveSalary()">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h3>Spend targets</h3>
+        <span class="seg">
+          <button class="${isMonth ? "active" : ""}" onclick="A.setTargetRange('month')">Monthly</button>
+          <button class="${!isMonth ? "active" : ""}" onclick="A.setTargetRange('year')">Annual</button>
+        </span>
+      </div>
+      <div class="card-sub">Set a target % of income for each area — bars show how you're faring against it for ${incomeLabel}.</div>
+      <div class="card-body">
+        ${income > 0 ? "" : '<p class="empty" style="margin-bottom:10px">Set your salary above first — targets are calculated as a % of income.</p>'}
+        ${groupRows}
+        ${savRow}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Corpus planning</h3></div>
+      <div class="card-sub">Your long-term picture. Emergency fund and savings pull from the Savings tab automatically.</div>
+      <div class="card-body">
+        ${corpusRow("Housing Fund", "What you've set aside for a home",
+          `<input class="mono" type="number" inputmode="decimal" placeholder="0" value="${a.housing ?? ""}" oninput="A.setAsset('housing', this.value)" onchange="A.refresh()" style="width:130px;text-align:right" />`)}
+        <div class="row2" style="margin:6px 0 4px;align-items:center">
+          <span class="bucket-sub" style="flex:1">Housing goal (optional)</span>
+          <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${a.housingTarget ?? ""}" oninput="A.setAsset('housingTarget', this.value)" onchange="A.refresh()" style="width:130px;text-align:right" />
+        </div>
+        ${fundBar(housing, a.housingTarget)}
+
+        ${corpusRow("Emergency Fund", "Cash in Bank, from Savings tab",
+          `<span class="entry-amt">${inr(emergency)}</span>`)}
+        <div class="row2" style="margin:6px 0 4px;align-items:center">
+          <span class="bucket-sub" style="flex:1">Emergency goal (optional)</span>
+          <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${a.emergencyTarget ?? ""}" oninput="A.setAsset('emergencyTarget', this.value)" onchange="A.refresh()" style="width:130px;text-align:right" />
+        </div>
+        ${fundBar(emergency, a.emergencyTarget)}
+
+        ${corpusRow("Savings", "MF + Shares + RD + FD, from Savings tab",
+          `<span class="entry-amt">${inr(savingsCorpus)}</span>`)}
+        ${corpusRow("Gold", "Current value of what you own",
+          `<input class="mono" type="number" inputmode="decimal" placeholder="0" value="${a.gold ?? ""}" oninput="A.setAsset('gold', this.value)" onchange="A.refresh()" style="width:130px;text-align:right" />`)}
+        ${corpusRow("Property", "Current value",
+          `<input class="mono" type="number" inputmode="decimal" placeholder="0" value="${a.property ?? ""}" oninput="A.setAsset('property', this.value)" onchange="A.refresh()" style="width:130px;text-align:right" />`)}
+
+        <div class="networth"><span>Total net worth</span><b>${inr(netWorth)}</b></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Category budgets</h3></div>
+      <div class="card-sub">Optional ₹ cap per category per month — powers the over-budget warnings in Expenses.</div>
+      <div class="card-body">
+        ${budgetLines}
+        <label class="field-label">Add a category</label>
+        <div class="row2" style="margin-top:0">
+          <input id="newcat-in" placeholder="e.g. Fitness" />
+          <button class="primary-btn quiet-btn" style="width:auto;margin-top:0" onclick="A.addCategory()">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Which category counts where</h3></div>
+      <div class="card-sub">Assign each category to a target area so the bars above stay accurate.</div>
+      <div class="card-body">${mapRows}</div>
+    </div>`;
+}
+
+function render() {
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <div class="month-bar">
+      <button onclick="A.prevMonth()" aria-label="Previous month">‹</button>
+      <span>${monthLabel(state.ym)}</span>
+      <button onclick="A.nextMonth()" aria-label="Next month">›</button>
+    </div>
+
+    <main>
+      ${state.tab === "dashboard" ? renderDashboard()
+        : state.tab === "expenses" ? renderExpenses()
+        : state.tab === "savings" ? renderSavings()
+        : renderBudget()}
+    </main>
+
+    <nav class="tabs">
+      <button class="${state.tab === "dashboard" ? "active" : ""}" onclick="A.setTab('dashboard')">Dashboard</button>
+      <button class="${state.tab === "expenses" ? "active" : ""}" onclick="A.setTab('expenses')">Expenses</button>
+      <button class="${state.tab === "savings" ? "active" : ""}" onclick="A.setTab('savings')">Savings</button>
+      <button class="${state.tab === "budget" ? "active" : ""}" onclick="A.setTab('budget')">Budget</button>
+    </nav>`;
+
+  const amt = document.getElementById("amt-in");
+  const note = document.getElementById("note-in");
+  const cat = document.getElementById("cat-in");
+  const mode = document.getElementById("mode-in");
+  if (amt) amt.oninput = e => draft.amount = e.target.value;
+  if (note) note.oninput = e => draft.note = e.target.value;
+  if (cat) cat.onchange = e => draft.category = e.target.value;
+  if (mode) mode.onchange = e => draft.mode = e.target.value;
+
+  const noteNew = document.getElementById("note-new");
+  if (noteNew) noteNew.addEventListener("keydown", e => { if (e.key === "Enter") A.addNote(); });
+}
+
+render();
+</script>
+</body>
+</html>
