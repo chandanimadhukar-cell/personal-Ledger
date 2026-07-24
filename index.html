@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>CB Chandani's Budgeting</title>
 
-<!-- iOS home-screen app behaviour -->
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
@@ -24,7 +23,6 @@
   --line: #E0E0DD;
   --white: #FFFFFF;
   --black: #111111;
-  /* chart colors only */
   --c-spent: #E2A23B;
   --c-saved: #2E7D5B;
   --c-over: #C05340;
@@ -32,63 +30,30 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
-  background: var(--paper);
-  font-family: 'Instrument Sans', sans-serif;
-  color: var(--ink);
-  -webkit-font-smoothing: antialiased;
-}
+body { background: var(--paper); font-family: 'Instrument Sans', sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
 
-/* ---------- black & white masthead ---------- */
-.masthead {
-  background: var(--black);
-  color: var(--white);
-  padding: calc(env(safe-area-inset-top) + 14px) 20px 14px;
-}
+.masthead { background: var(--black); color: var(--white); padding: calc(env(safe-area-inset-top) + 14px) 20px 14px; }
 .masthead-inner { max-width: 480px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
-.logo {
-  width: 40px; height: 40px; border: 2px solid var(--white); border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Fraunces', serif; font-weight: 700; font-size: 17px; letter-spacing: 0.02em;
-  flex-shrink: 0;
-}
-.masthead h1 { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; letter-spacing: 0.01em; line-height: 1.2; }
-.masthead small { display: block; font-size: 11px; font-weight: 400; color: #BDBDBD; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+.logo { width: 40px; height: 40px; border: 2px solid var(--white); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-weight: 700; font-size: 17px; flex-shrink: 0; }
+.masthead h1 { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; line-height: 1.2; }
+.masthead small { display: block; font-size: 11px; color: #BDBDBD; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
 
-#app {
-  max-width: 480px;
-  margin: 0 auto;
-  min-height: 60vh;
-  padding: 14px 20px calc(env(safe-area-inset-bottom) + 96px);
-}
+#app { max-width: 480px; margin: 0 auto; min-height: 60vh; padding: 14px 20px calc(env(safe-area-inset-bottom) + 96px); }
 
 h3 { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; }
 
-.ghost-btn {
-  background: none; border: none; color: var(--ink); text-decoration: underline;
-  font-family: inherit; font-weight: 600; font-size: 13px; cursor: pointer; padding: 0;
-}
+.ghost-btn { background: none; border: none; color: var(--ink); text-decoration: underline; font-family: inherit; font-weight: 600; font-size: 13px; cursor: pointer; padding: 0; }
 
-.month-bar {
-  display: flex; align-items: center; justify-content: space-between;
-  background: var(--white); border: 1px solid var(--black); border-radius: 12px; padding: 6px 8px;
-}
-.month-bar button {
-  background: none; border: none; font-size: 20px; color: var(--ink);
-  cursor: pointer; padding: 2px 12px; line-height: 1;
-}
+.month-bar { display: flex; align-items: center; justify-content: space-between; background: var(--white); border: 1px solid var(--black); border-radius: 12px; padding: 6px 8px; }
+.month-bar button { background: none; border: none; font-size: 20px; color: var(--ink); cursor: pointer; padding: 2px 12px; line-height: 1; }
 .month-bar span { font-weight: 600; font-size: 15px; }
 
-.card {
-  background: var(--white); border: 1px solid var(--line); border-radius: 16px;
-  padding: 16px; margin-top: 14px;
-}
-.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.card { background: var(--white); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-top: 14px; }
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .card-sub { font-size: 12px; color: var(--slate); margin-top: 4px; }
 .card-body { margin-top: 12px; }
 .big-num { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 18px; }
 
-/* ---------- dashboard stat grid ---------- */
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
 .stat { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
 .stat label { font-size: 11px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: 0.05em; }
@@ -96,11 +61,10 @@ h3 { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; }
 .stat small { font-size: 11px; color: var(--slate); }
 
 .seg { display: inline-flex; background: var(--mist); border-radius: 9px; padding: 3px; }
-.seg button {
-  border: none; background: none; padding: 5px 12px; border-radius: 7px;
-  font-family: inherit; font-size: 12px; font-weight: 600; color: var(--slate); cursor: pointer;
-}
+.seg button { border: none; background: none; padding: 5px 12px; border-radius: 7px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--slate); cursor: pointer; }
 .seg button.active { background: var(--black); color: var(--white); }
+.seg-wide { display: flex; margin-top: 14px; }
+.seg-wide button { flex: 1; padding: 8px 4px; }
 
 .donut-wrap { display: flex; align-items: center; gap: 16px; }
 .donut-legend { flex: 1; min-width: 0; }
@@ -113,7 +77,6 @@ h3 { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; }
 
 .chart-note { font-size: 11px; color: var(--slate); margin-top: 8px; }
 
-/* ---------- notes ---------- */
 .note-input-row { display: flex; gap: 8px; }
 .note-input-row input[type=text] { flex: 1; }
 .note-item { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--mist); }
@@ -133,15 +96,12 @@ input, select {
 input:focus, select:focus { border-color: var(--black); }
 input.mono { font-family: 'IBM Plex Mono', monospace; }
 input[type=checkbox] { width: auto; }
+input[type=file] { display: none; }
 
 .row2 { display: flex; gap: 8px; margin-top: 8px; }
 .row2:first-child { margin-top: 0; }
 
-.primary-btn {
-  background: var(--black); color: var(--white); border: none; border-radius: 10px;
-  padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
-  font-family: inherit; width: 100%; margin-top: 10px;
-}
+.primary-btn { background: var(--black); color: var(--white); border: none; border-radius: 10px; padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; width: 100%; margin-top: 10px; }
 .primary-btn:active { background: #333; }
 .quiet-btn { background: var(--mist); color: var(--ink); }
 
@@ -173,31 +133,28 @@ input[type=checkbox] { width: auto; }
 
 .empty { font-size: 13px; color: var(--slate); }
 
-/* ---------- targets ---------- */
-.target-row { padding: 10px 0; border-bottom: 1px solid var(--mist); }
-.target-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-.target-name { font-size: 14px; font-weight: 500; flex: 1; }
-.target-name small { display: block; font-weight: 400; font-size: 11px; color: var(--slate); }
+/* targets */
+.group-block { border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+.group-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.group-name { font-size: 14px; font-weight: 600; flex: 1; }
+.group-name small { display: block; font-weight: 400; font-size: 11px; color: var(--slate); }
 .pct-input { display: flex; align-items: center; gap: 5px; }
 .pct-input input { width: 62px; text-align: right; padding: 8px 10px; }
 .pct-input span { font-size: 13px; color: var(--slate); }
-.target-detail { display: flex; justify-content: space-between; font-size: 12px; color: var(--slate); margin-top: 6px; }
+.target-detail { display: flex; justify-content: space-between; font-size: 12px; color: var(--slate); margin-top: 6px; flex-wrap: wrap; gap: 4px; }
 .target-detail b { font-family: 'IBM Plex Mono', monospace; color: var(--ink); font-weight: 500; }
+.subcat { padding: 7px 0 0 10px; border-left: 2px solid var(--mist); margin-top: 8px; }
+.subcat-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 4px 0; }
+.subcat-name { font-size: 13px; flex: 1; }
+.subcat-calc { font-size: 11px; color: var(--slate); font-family: 'IBM Plex Mono', monospace; white-space: nowrap; }
 
-.networth {
-  display: flex; justify-content: space-between; align-items: baseline;
-  border-top: 2px solid var(--black); margin-top: 8px; padding-top: 10px;
-}
+.networth { display: flex; justify-content: space-between; align-items: baseline; border-top: 2px solid var(--black); margin-top: 8px; padding-top: 10px; }
 .networth span { font-weight: 600; font-size: 14px; }
 .networth b { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600; }
 
 .map-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 5px 0; }
 .map-row span { font-size: 14px; }
 .map-row select { width: 150px; padding: 8px 10px; font-size: 14px; }
-
-.budget-line { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 5px 0; }
-.budget-line span { font-size: 14px; }
-.budget-line input { width: 110px; text-align: right; }
 
 .tabs {
   position: fixed; bottom: 0; left: 0; right: 0;
@@ -206,17 +163,12 @@ input[type=checkbox] { width: auto; }
   box-shadow: 0 -6px 24px rgba(17,17,17,0.06);
   padding-bottom: env(safe-area-inset-bottom);
 }
-.tabs button {
-  flex: 1; padding: 15px 2px 17px; border: none; cursor: pointer;
-  background: none; font-family: inherit; font-weight: 600; font-size: 12.5px;
-  color: var(--slate); border-top: 2px solid transparent; margin-top: -1px;
-}
+.tabs button { flex: 1; padding: 15px 2px 17px; border: none; cursor: pointer; background: none; font-family: inherit; font-weight: 600; font-size: 13px; color: var(--slate); border-top: 2px solid transparent; margin-top: -1px; }
 .tabs button.active { color: var(--ink); border-top-color: var(--black); }
 
-.field-label {
-  display: block; font-size: 12px; font-weight: 600; color: var(--slate);
-  text-transform: uppercase; letter-spacing: 0.04em; margin: 14px 0 6px;
-}
+.field-label { display: block; font-size: 12px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: 0.04em; margin: 14px 0 6px; }
+details.settings { margin-top: 14px; }
+details.settings summary { font-size: 13px; font-weight: 600; cursor: pointer; color: var(--slate); }
 </style>
 </head>
 <body>
@@ -265,25 +217,39 @@ const OLD_KEY = "ledger-data-v1";
 /* ---------------- storage ---------------- */
 let memStore = null;
 function loadData() {
+  let d = null;
   try {
-    let raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(OLD_KEY);
-    if (raw) return Object.assign(emptyData(), JSON.parse(raw));
-  } catch (e) { /* unavailable in preview */ }
-  return memStore || emptyData();
+    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(OLD_KEY);
+    if (raw) d = Object.assign(emptyData(), JSON.parse(raw));
+  } catch (e) { /* unavailable */ }
+  if (!d) d = memStore || emptyData();
+  /* migrations from earlier versions */
+  if (!d.salaryByMonth) d.salaryByMonth = {};
+  if (Number(d.salary) > 0 && Object.keys(d.salaryByMonth).length === 0) {
+    d.salaryByMonth[ymNow()] = Number(d.salary);
+  }
+  if (!d.targetsByMonth) d.targetsByMonth = {};
+  if (d.targets && Object.keys(d.targets).length && Object.keys(d.targetsByMonth).length === 0) {
+    d.targetsByMonth[ymNow()] = {
+      groups: { living: d.targets.living ?? "", leisure: d.targets.leisure ?? "", support: d.targets.support ?? "" },
+      savMonthly: "", savAnnual: d.targets.savingsAnnual ?? "", cats: {},
+    };
+  }
+  if (!d.customCorpus) d.customCorpus = [];
+  if (!d.assets) d.assets = {};
+  return d;
 }
 function saveData(d) {
   memStore = d;
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
-  catch (e) { /* keep in memory */ }
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } catch (e) { /* keep in memory */ }
 }
 function emptyData() {
   return {
-    salary: 0, salaryByMonth: {},
+    salaryByMonth: {},
     categories: DEFAULT_CATEGORIES.slice(),
-    budgets: {}, expenses: {}, savings: {}, corpus: {}, notes: [],
-    targets: {},        /* { living, leisure, support, savingsAnnual } — % of salary */
-    groupMap: {},       /* { category: groupKey } */
-    assets: {},         /* { housing, gold, property, housingTarget, emergencyTarget } */
+    expenses: {}, savings: {}, corpus: {}, notes: [],
+    targetsByMonth: {}, groupMap: {},
+    assets: {}, customCorpus: [],
   };
 }
 
@@ -308,7 +274,7 @@ const fmtTs = iso => new Date(iso).toLocaleString("en-IN", { day: "numeric", mon
 
 /* ---------------- state ---------------- */
 let data = loadData();
-let state = { tab: "dashboard", ym: ymNow(), showAllEntries: false, donutRange: "month", noteType: "todo", targetRange: "month" };
+let state = { tab: "dashboard", ym: ymNow(), showAllEntries: false, donutRange: "month", noteType: "todo", planSeg: "budget", openGroup: "living" };
 let draft = { amount: "", category: data.categories[0] || "Miscellaneous", mode: "UPI", note: "" };
 
 function commit() { saveData(data); render(); }
@@ -316,7 +282,6 @@ function commit() { saveData(data); render(); }
 /* ---------------- derived ---------------- */
 function expensesFor(ym) { return data.expenses[ym] || []; }
 function monthExpenses() { return expensesFor(state.ym); }
-function monthSavings() { return data.savings[state.ym] || {}; }
 function spentIn(ym) { return expensesFor(ym).reduce((s, e) => s + e.amount, 0); }
 function savedIn(ym) { const v = data.savings[ym] || {}; return SAVING_BUCKETS.reduce((s, b) => s + (Number(v[b.key]) || 0), 0); }
 function spentTotal() { return spentIn(state.ym); }
@@ -324,19 +289,47 @@ function savedTotal() { return savedIn(state.ym); }
 function catColor(cat) { const i = data.categories.indexOf(cat); return CAT_COLORS[(i < 0 ? 0 : i) % CAT_COLORS.length]; }
 function groupOf(cat) { return (data.groupMap && data.groupMap[cat]) || DEFAULT_GROUP_MAP[cat] || "living"; }
 
+/* first month that has any recorded data — the app's "start" */
+function firstDataMonth() {
+  const keys = [];
+  for (const [k, v] of Object.entries(data.expenses)) if (v && v.length) keys.push(k);
+  for (const [k, v] of Object.entries(data.savings)) if (v && Object.values(v).some(x => Number(x) > 0)) keys.push(k);
+  for (const [k, v] of Object.entries(data.salaryByMonth)) if (Number(v) > 0) keys.push(k);
+  return keys.length ? keys.sort()[0] : state.ym;
+}
+
+/* salary: explicit per-month entries; carries forward from the last entry, but never before the first entry */
 function effSalary(ym) {
   const hist = data.salaryByMonth || {};
+  const keys = Object.keys(hist).filter(k => k <= ym && Number(hist[k]) > 0).sort();
+  if (!keys.length) return 0;
+  return Number(hist[keys[keys.length - 1]]) || 0;
+}
+function salaryIsExplicit(ym) { return Number((data.salaryByMonth || {})[ym]) > 0; }
+
+/* targets: per-month with carry-forward */
+function effTargets(ym) {
+  const hist = data.targetsByMonth || {};
   const keys = Object.keys(hist).filter(k => k <= ym).sort();
-  if (keys.length) return Number(hist[keys[keys.length - 1]]) || 0;
-  return Number(data.salary) || 0;
+  if (keys.length) return hist[keys[keys.length - 1]];
+  return { groups: { living: "", leisure: "", support: "" }, savMonthly: "", savAnnual: "", cats: {} };
+}
+function stampTargets(mut) {
+  const t = JSON.parse(JSON.stringify(effTargets(state.ym)));
+  if (!t.cats) t.cats = {};
+  if (!t.groups) t.groups = { living: "", leisure: "", support: "" };
+  mut(t);
+  data.targetsByMonth[state.ym] = t;
+  saveData(data);
 }
 
 function yearMonths(year) {
-  const now = ymNow();
+  const now = ymNow(), first = firstDataMonth();
   const out = [];
   for (let m = 1; m <= 12; m++) {
     const ym = year + "-" + String(m).padStart(2, "0");
     if (ym > now) break;
+    if (ym < first) continue;
     out.push(ym);
   }
   return out;
@@ -355,13 +348,14 @@ function annualStats(year) {
   return { earned, spent, saved, byCat, monthCount: months.length };
 }
 
-function groupSpend(range) {
-  /* returns { living, leisure, support } spend for month or year */
+function groupSpendIn(ym) {
   const out = { living: 0, leisure: 0, support: 0 };
-  const months = range === "month" ? [state.ym] : yearMonths(yearOf(state.ym));
-  for (const ym of months) {
-    for (const e of expensesFor(ym)) out[groupOf(e.category)] += e.amount;
-  }
+  for (const e of expensesFor(ym)) out[groupOf(e.category)] += e.amount;
+  return out;
+}
+function catSpendIn(ym) {
+  const out = {};
+  for (const e of expensesFor(ym)) out[e.category] = (out[e.category] || 0) + e.amount;
   return out;
 }
 
@@ -372,6 +366,23 @@ function annualSavingsByBucket(year) {
     SAVING_BUCKETS.forEach(b => t[b.key] += Number(vals[b.key]) || 0);
   }
   return t;
+}
+function allTimeSavingsByBucket() {
+  const t = {}; SAVING_BUCKETS.forEach(b => t[b.key] = 0);
+  for (const vals of Object.values(data.savings)) {
+    SAVING_BUCKETS.forEach(b => t[b.key] += Number(vals[b.key]) || 0);
+  }
+  return t;
+}
+
+/* category ₹ target for a month = income × group% × cat%-of-group */
+function catTargetAmt(ym, cat) {
+  const t = effTargets(ym);
+  const income = effSalary(ym);
+  const gPct = Number(t.groups[groupOf(cat)]) || 0;
+  const cPct = Number((t.cats || {})[cat]) || 0;
+  if (!income || !gPct || !cPct) return 0;
+  return income * gPct / 100 * cPct / 100;
 }
 
 /* ---------------- SVG charts ---------------- */
@@ -395,12 +406,21 @@ function donutSVG(segs) {
 }
 
 function trendBarsSVG() {
+  /* window: from first data month (or 12 months back, whichever is later) to selected month */
+  const first = firstDataMonth();
   const months = [];
-  for (let i = 11; i >= 0; i--) months.push(shiftMonth(state.ym, -i));
+  let m = shiftMonth(state.ym, -11);
+  if (m < first) m = first;
+  while (m <= state.ym) { months.push(m); m = shiftMonth(m, 1); }
+  if (!months.length) months.push(state.ym);
+
   const series = months.map(ym => ({ ym, spent: spentIn(ym), saved: savedIn(ym), salary: effSalary(ym) }));
   const max = Math.max(1, ...series.map(s => Math.max(s.spent, s.saved, s.salary)));
+  const n = series.length;
   const W = 340, H = 150, padL = 6, padB = 20, chartH = H - padB - 8;
-  const slot = (W - padL * 2) / 12, barW = Math.min(9, slot / 3);
+  const slot = (W - padL * 2) / n;
+  const barW = Math.max(6, Math.min(16, slot / 3));
+  const labelEvery = n > 8 ? 2 : 1;
   let out = "";
   series.forEach((s, i) => {
     const x = padL + i * slot + slot / 2;
@@ -409,7 +429,7 @@ function trendBarsSVG() {
     out += `<rect x="${(x - barW - 1).toFixed(1)}" y="${(8 + chartH - hSpent).toFixed(1)}" width="${barW}" height="${hSpent.toFixed(1)}" rx="2" fill="var(--c-spent)"/>`;
     out += `<rect x="${(x + 1).toFixed(1)}" y="${(8 + chartH - hSaved).toFixed(1)}" width="${barW}" height="${hSaved.toFixed(1)}" rx="2" fill="var(--c-saved)"/>`;
     if (s.salary > 0) out += `<line x1="${(x - barW - 3).toFixed(1)}" x2="${(x + barW + 3).toFixed(1)}" y1="${ySal.toFixed(1)}" y2="${ySal.toFixed(1)}" stroke="#111" stroke-width="1.4"/>`;
-    if (i % 2 === 0) out += `<text x="${x.toFixed(1)}" y="${H - 5}" text-anchor="middle" font-size="9" fill="#6E6E6E" font-family="Instrument Sans, sans-serif">${monthShort(s.ym)}</text>`;
+    if (i % labelEvery === 0) out += `<text x="${x.toFixed(1)}" y="${H - 5}" text-anchor="middle" font-size="9" fill="#6E6E6E" font-family="Instrument Sans, sans-serif">${monthShort(s.ym)}${n > 12 || s.ym.endsWith("-01") ? " '" + s.ym.slice(2, 4) : ""}</text>`;
   });
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">${out}</svg>`;
 }
@@ -421,7 +441,9 @@ window.A = {
   nextMonth() { state.ym = shiftMonth(state.ym, 1); state.showAllEntries = false; render(); },
   toggleEntries() { state.showAllEntries = !state.showAllEntries; render(); },
   setDonutRange(r) { state.donutRange = r; render(); },
-  setTargetRange(r) { state.targetRange = r; render(); },
+  setPlanSeg(s) { state.planSeg = s; render(); },
+  setOpenGroup(g) { state.openGroup = state.openGroup === g ? "" : g; render(); },
+  refresh() { render(); },
 
   addExpense() {
     const amt = parseFloat(document.getElementById("amt-in").value);
@@ -434,7 +456,6 @@ window.A = {
     draft = { amount: "", category, mode, note: "" };
     commit();
   },
-
   deleteExpense(id) {
     data.expenses[state.ym] = monthExpenses().filter(e => e.id !== id);
     commit();
@@ -467,37 +488,45 @@ window.A = {
     commit();
   },
 
-  /* ---- budget tab ---- */
+  /* plan tab */
   saveSalary() {
     const salary = parseFloat(document.getElementById("salary-in").value) || 0;
-    data.salary = salary;
-    if (!data.salaryByMonth) data.salaryByMonth = {};
-    data.salaryByMonth[state.ym] = salary;
+    if (salary > 0) data.salaryByMonth[state.ym] = salary;
+    else delete data.salaryByMonth[state.ym];
     commit();
   },
-  setTarget(key, val) {
-    if (!data.targets) data.targets = {};
-    data.targets[key] = val === "" ? "" : (parseFloat(val) || 0);
-    saveData(data);
+  copySalaryForward() {
+    const s = effSalary(state.ym);
+    if (s > 0) { data.salaryByMonth[state.ym] = s; commit(); }
   },
+  setGroupTarget(key, val) { stampTargets(t => { t.groups[key] = val === "" ? "" : (parseFloat(val) || 0); }); },
+  setCatTarget(cat, val) { stampTargets(t => { t.cats[cat] = val === "" ? "" : (parseFloat(val) || 0); }); },
+  setSavTarget(which, val) { stampTargets(t => { t[which] = val === "" ? "" : (parseFloat(val) || 0); }); },
   setAsset(key, val) {
     if (!data.assets) data.assets = {};
     data.assets[key] = val === "" ? "" : (parseFloat(val) || 0);
     saveData(data);
+  },
+  setCustomCorpus(id, field, val) {
+    const item = data.customCorpus.find(c => c.id === id);
+    if (item) { item[field] = val === "" ? "" : (parseFloat(val) || 0); saveData(data); }
+  },
+  addCustomCorpus() {
+    const el = document.getElementById("corpus-new");
+    const label = el.value.trim();
+    if (!label) return;
+    data.customCorpus.push({ id: uid(), label, goal: "", value: "" });
+    commit();
+  },
+  deleteCustomCorpus(id) {
+    data.customCorpus = data.customCorpus.filter(c => c.id !== id);
+    commit();
   },
   setGroupFor(cat, group) {
     if (!data.groupMap) data.groupMap = {};
     data.groupMap[cat] = group;
     commit();
   },
-  setBudget(cat, val) {
-    if (!data.budgets) data.budgets = {};
-    const n = parseFloat(val);
-    if (n > 0) data.budgets[cat] = n; else delete data.budgets[cat];
-    saveData(data);
-  },
-  refresh() { render(); },
-
   addCategory() {
     const el = document.getElementById("newcat-in");
     const c = el.value.trim();
@@ -517,13 +546,39 @@ window.A = {
         if (v > 0) rows.push(["saving", ym, "", b.label, "", "", v].join(","));
       }
     }
-    const blob = new Blob([rows.join("\n")], { type: "text/csv" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "cb-budget-backup-" + new Date().toISOString().slice(0, 10) + ".csv";
-    a.click();
+    downloadFile(rows.join("\n"), "text/csv", "cb-budget-" + new Date().toISOString().slice(0, 10) + ".csv");
+  },
+  exportJSON() {
+    downloadFile(JSON.stringify(data, null, 2), "application/json", "cb-budget-backup-" + new Date().toISOString().slice(0, 10) + ".json");
+  },
+  importJSON(ev) {
+    const f = ev.target.files && ev.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const obj = JSON.parse(r.result);
+        if (!obj || typeof obj !== "object" || (!obj.expenses && !obj.savings && !obj.salaryByMonth)) throw new Error("bad");
+        data = Object.assign(emptyData(), obj);
+        saveData(data);
+        render();
+        alert("Backup restored. Your data is now up to date on this device.");
+      } catch (e) {
+        alert("That file doesn't look like a CB Budget backup. Nothing was changed.");
+      }
+    };
+    r.readAsText(f);
+    ev.target.value = "";
   },
 };
+
+function downloadFile(content, type, name) {
+  const blob = new Blob([content], { type });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+}
 
 /* ---------------- renderers ---------------- */
 function renderDashboard() {
@@ -535,9 +590,7 @@ function renderDashboard() {
   const isCurrentYear = year === yearOf(ymNow());
   const ytd = isCurrentYear ? " (YTD)" : "";
 
-  const byCat = state.donutRange === "month"
-    ? monthExpenses().reduce((m, e) => (m[e.category] = (m[e.category] || 0) + e.amount, m), {})
-    : A_.byCat;
+  const byCat = state.donutRange === "month" ? catSpendIn(state.ym) : A_.byCat;
   const catSegs = Object.entries(byCat).sort((a, b) => b[1] - a[1])
     .map(([label, value]) => ({ label, value, color: catColor(label) }));
   const catTotal = catSegs.reduce((s, x) => s + x.value, 0);
@@ -557,7 +610,8 @@ function renderDashboard() {
       <span class="dl-val">${inrShort(s.value)}<small>${pctOf(s.value, A_.saved)}</small></span>
     </div>`).join("");
 
-  const notes = data.notes || [];
+  /* notes: show ONLY the selected type */
+  const notes = (data.notes || []).filter(n => (n.type || "note") === state.noteType);
   const noteItems = notes.map(n => `
     <div class="note-item">
       ${n.type === "todo"
@@ -567,7 +621,7 @@ function renderDashboard() {
         <div class="note-text ${n.done ? "done" : ""}">${esc(n.text)}</div>
         <div class="note-ts">${fmtTs(n.ts)}</div>
       </div>
-      <button class="del-btn" onclick="A.deleteNote('${n.id}')" aria-label="Delete note">×</button>
+      <button class="del-btn" onclick="A.deleteNote('${n.id}')" aria-label="Delete">×</button>
     </div>`).join("");
 
   return `
@@ -580,7 +634,7 @@ function renderDashboard() {
 
     <div class="card">
       <div class="card-head"><h3>Month by month</h3></div>
-      <div class="card-sub">Spent vs saved, last 12 months · black tick = salary</div>
+      <div class="card-sub">Spent vs saved since you started · black tick = salary</div>
       <div class="card-body">
         ${trendBarsSVG()}
         <div class="chart-note"><span style="color:var(--c-spent)">■</span> Spent &nbsp; <span style="color:var(--c-saved)">■</span> Saved</div>
@@ -602,6 +656,7 @@ function renderDashboard() {
 
     <div class="card">
       <div class="card-head"><h3>${year} at a glance${ytd}</h3></div>
+      <div class="card-sub">Earnings count only from your first recorded month (${monthLabel(firstDataMonth())}).</div>
       <div class="card-body">
         <div class="mode-row"><span>Earned</span><span>${inr(A_.earned)}</span></div>
         <div class="mode-row"><span>Spent</span><span>${inr(A_.spent)}<small>${pctOf(A_.spent, A_.earned)} of earnings</small></span></div>
@@ -619,10 +674,10 @@ function renderDashboard() {
 
     <div class="card">
       <div class="card-head">
-        <h3>Notes &amp; to-dos</h3>
+        <h3>${state.noteType === "todo" ? "To-dos" : "Notes"}</h3>
         <span class="seg">
-          <button class="${state.noteType === "todo" ? "active" : ""}" onclick="A.setNoteType('todo')">To-do</button>
-          <button class="${state.noteType === "note" ? "active" : ""}" onclick="A.setNoteType('note')">Note</button>
+          <button class="${state.noteType === "todo" ? "active" : ""}" onclick="A.setNoteType('todo')">To-dos</button>
+          <button class="${state.noteType === "note" ? "active" : ""}" onclick="A.setNoteType('note')">Notes</button>
         </span>
       </div>
       <div class="card-body">
@@ -631,15 +686,22 @@ function renderDashboard() {
           <button class="primary-btn" style="width:auto;margin-top:0" onclick="A.addNote()">Add</button>
         </div>
         <div style="margin-top:10px">
-          ${noteItems || '<p class="empty">Jot reminders here — pay rent, review SIP, chase a refund. Each one gets a timestamp.</p>'}
+          ${noteItems || `<p class="empty">${state.noteType === "todo" ? "No to-dos yet. Add one above — it gets a timestamp automatically." : "No notes yet. Jot thoughts here — each gets a timestamp."}</p>`}
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-head"><h3>Backup</h3></div>
-      <div class="card-sub">Your data lives on this device. Download a CSV copy any time.</div>
-      <div class="card-body"><button class="primary-btn quiet-btn" style="margin-top:0" onclick="A.exportCSV()">Download CSV backup</button></div>
+      <div class="card-head"><h3>Backup &amp; transfer</h3></div>
+      <div class="card-sub">Data lives on this device. To move it to your laptop (or back): download the backup file here, send it to the other device (AirDrop / email), open the app there and restore it.</div>
+      <div class="card-body">
+        <button class="primary-btn" style="margin-top:0" onclick="A.exportJSON()">Download full backup</button>
+        <label class="primary-btn quiet-btn" style="display:block;text-align:center">
+          Restore from backup
+          <input type="file" accept=".json,application/json" onchange="A.importJSON(event)" />
+        </label>
+        <button class="primary-btn quiet-btn" onclick="A.exportCSV()">Download CSV (for Excel)</button>
+      </div>
     </div>`;
 }
 
@@ -647,17 +709,13 @@ function renderExpenses() {
   const expenses = monthExpenses();
   const total = spentTotal();
   const salary = effSalary(state.ym);
-
-  const byCat = {}, byMode = {};
-  expenses.forEach(e => {
-    byCat[e.category] = (byCat[e.category] || 0) + e.amount;
-    byMode[e.mode] = (byMode[e.mode] || 0) + e.amount;
-  });
+  const byCat = catSpendIn(state.ym), byMode = {};
+  expenses.forEach(e => { byMode[e.mode] = (byMode[e.mode] || 0) + e.amount; });
 
   const catRows = Object.entries(byCat).sort((a, b) => b[1] - a[1]).map(([cat, amt]) => {
-    const budget = data.budgets[cat];
-    const over = budget && amt > budget;
-    const width = budget ? Math.min(amt / budget * 100, 100) : Math.min(amt / (total || 1) * 100, 100);
+    const budget = catTargetAmt(state.ym, cat);
+    const over = budget > 0 && amt > budget;
+    const width = budget > 0 ? Math.min(amt / budget * 100, 100) : Math.min(amt / (total || 1) * 100, 100);
     return `
       <div class="cat-row">
         <div class="cat-top">
@@ -665,7 +723,7 @@ function renderExpenses() {
           <span class="cat-amt" style="${over ? "color:var(--c-over)" : ""}">${inr(amt)}${salary > 0 ? `<small>${pctOf(amt, salary)}</small>` : ""}</span>
         </div>
         <div class="cat-bar"><div style="width:${width}%;background:${over ? "var(--c-over)" : catColor(cat)}"></div></div>
-        ${budget ? `<div class="cat-budget ${over ? "over" : ""}">${over ? "Over budget by " + inr(amt - budget) : inr(budget - amt) + " left of " + inr(budget) + " budget"}</div>` : ""}
+        ${budget > 0 ? `<div class="cat-budget ${over ? "over" : ""}">${over ? "Over target by " + inr(amt - budget) : inr(budget - amt) + " left of " + inr(budget) + " target"}</div>` : ""}
       </div>`;
   }).join("");
 
@@ -704,7 +762,7 @@ function renderExpenses() {
 
     <div class="card">
       <div class="card-head"><h3>Spent this month</h3><span class="big-num">${inr(total)}</span></div>
-      <div class="card-sub">${salary > 0 ? pctOf(total, salary) + " of salary" : "Set your salary in the Budget tab to see % of income"}</div>
+      <div class="card-sub">${salary > 0 ? pctOf(total, salary) + " of salary" : "Set this month's salary in the Plan tab to see % of income"}</div>
       <div class="card-body">
         ${catRows || '<p class="empty">Nothing logged yet this month. Add your first expense above.</p>'}
       </div>
@@ -722,13 +780,130 @@ function renderExpenses() {
       </div>` : ""}`;
 }
 
-function renderSavings() {
-  const ms = monthSavings();
+/* ---------------- Plan tab (merged Budget + Savings) ---------------- */
+function renderPlan() {
+  const seg = state.planSeg;
+  return `
+    <span class="seg seg-wide">
+      <button class="${seg === "budget" ? "active" : ""}" onclick="A.setPlanSeg('budget')">Budget</button>
+      <button class="${seg === "savings" ? "active" : ""}" onclick="A.setPlanSeg('savings')">Savings</button>
+      <button class="${seg === "overall" ? "active" : ""}" onclick="A.setPlanSeg('overall')">Overall</button>
+      <button class="${seg === "corpus" ? "active" : ""}" onclick="A.setPlanSeg('corpus')">Corpus</button>
+    </span>
+    ${seg === "budget" ? renderPlanBudget() : seg === "savings" ? renderPlanSavings() : seg === "overall" ? renderPlanOverall() : renderPlanCorpus()}`;
+}
+
+function renderPlanBudget() {
+  const salary = effSalary(state.ym);
+  const explicit = salaryIsExplicit(state.ym);
+  const t = effTargets(state.ym);
+  const gSpend = groupSpendIn(state.ym);
+  const cSpend = catSpendIn(state.ym);
+
+  const groupBlocks = GROUPS.map(g => {
+    const gPct = Number(t.groups[g.key]) || 0;
+    const gAmt = salary * gPct / 100;
+    const actual = gSpend[g.key];
+    const over = gAmt > 0 && actual > gAmt;
+    const width = gAmt > 0 ? Math.min(actual / gAmt * 100, 100) : 0;
+    const cats = data.categories.filter(c => groupOf(c) === g.key);
+    const isOpen = state.openGroup === g.key;
+
+    const catRows = cats.map(c => {
+      const cPct = Number((t.cats || {})[c]) || 0;
+      const cAmt = gAmt * cPct / 100;
+      const cActual = cSpend[c] || 0;
+      const cOver = cAmt > 0 && cActual > cAmt;
+      return `
+        <div class="subcat-row">
+          <span class="subcat-name">${esc(c)}</span>
+          <span class="subcat-calc">${cPct > 0 && gAmt > 0 ? "= " + inr(cAmt) : ""}</span>
+          <div class="pct-input">
+            <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${(t.cats || {})[c] ?? ""}"
+              oninput="A.setCatTarget('${esc(c)}', this.value)" onchange="A.refresh()" />
+            <span>%</span>
+          </div>
+        </div>
+        ${cPct > 0 && gAmt > 0 ? `
+          <div class="cat-bar" style="margin:2px 0 6px"><div style="width:${Math.min(cActual / cAmt * 100, 100)}%;background:${cOver ? "var(--c-over)" : catColor(c)}"></div></div>
+          <div class="cat-budget ${cOver ? "over" : ""}" style="margin:0 0 6px">Spent ${inr(cActual)} ${cOver ? "— over by " + inr(cActual - cAmt) : "of " + inr(cAmt)}</div>` : ""}`;
+    }).join("");
+
+    return `
+      <div class="group-block">
+        <div class="group-head">
+          <div class="group-name">${g.label}<small>${g.hint}</small></div>
+          <div class="pct-input">
+            <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${t.groups[g.key] ?? ""}"
+              oninput="A.setGroupTarget('${g.key}', this.value)" onchange="A.refresh()" />
+            <span>% of salary</span>
+          </div>
+        </div>
+        ${gPct > 0 && salary > 0 ? `
+          <div class="cat-bar" style="margin-top:8px"><div style="width:${width}%;background:${over ? "var(--c-over)" : GROUP_COLORS[g.key]}"></div></div>
+          <div class="target-detail">
+            <span>Budget: <b>${inr(gAmt)}</b> · Spent: <b>${inr(actual)}</b></span>
+            <span style="${over ? "color:var(--c-over)" : ""}">${over ? "Over by " + inr(actual - gAmt) : inr(gAmt - actual) + " left"}</span>
+          </div>` : `<div class="target-detail"><span>Spent: <b>${inr(actual)}</b></span><span>${salary > 0 ? "Set a %" : "Set salary first"}</span></div>`}
+        <button class="ghost-btn" style="margin-top:8px" onclick="A.setOpenGroup('${g.key}')">${isOpen ? "Hide" : "Set"} category splits (% of this budget)</button>
+        ${isOpen ? `<div class="subcat">${catRows || '<p class="empty">No categories assigned to this group.</p>'}</div>` : ""}
+      </div>`;
+  }).join("");
+
+  return `
+    <div class="card">
+      <div class="card-head"><h3>Salary — ${monthLabel(state.ym)}</h3></div>
+      <div class="card-sub">${explicit ? "Recorded for this month." : salary > 0 ? "Carried from your last entry — confirm or change it for this month." : "Enter this month's in-hand salary."} Each month keeps its own figure, so fluctuations are tracked correctly.</div>
+      <div class="card-body">
+        <div class="row2">
+          <input id="salary-in" class="mono" type="number" inputmode="decimal" placeholder="e.g. 300000" value="${explicit ? salary : ""}" />
+          <button class="primary-btn" style="width:auto;margin-top:0" onclick="A.saveSalary()">Save</button>
+        </div>
+        ${!explicit && salary > 0 ? `<button class="ghost-btn" style="margin-top:8px" onclick="A.copySalaryForward()">Use ${inr(salary)} (same as last month)</button>` : ""}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Estimated monthly budget</h3></div>
+      <div class="card-sub">Set each area as a % of this month's salary${salary > 0 ? " (" + inr(salary) + ")" : ""}, then split it further by category — e.g. Living 30% = ${salary > 0 ? inr(salary * 0.3) : "₹—"}, and Rent at 50% of Living = ${salary > 0 ? inr(salary * 0.15) : "₹—"}. Targets carry forward each month until you change them.</div>
+      <div class="card-body">${groupBlocks}</div>
+    </div>
+
+    <details class="settings card" style="padding:14px 16px">
+      <summary>Categories &amp; grouping</summary>
+      <div class="card-body">
+        <div class="row2" style="margin-bottom:10px">
+          <input id="newcat-in" placeholder="Add a category, e.g. Fitness" />
+          <button class="primary-btn quiet-btn" style="width:auto;margin-top:0" onclick="A.addCategory()">Add</button>
+        </div>
+        ${data.categories.map(c2 => `
+          <div class="map-row">
+            <span>${esc(c2)}</span>
+            <select onchange="A.setGroupFor('${esc(c2)}', this.value)">
+              ${GROUPS.map(g => `<option value="${g.key}" ${groupOf(c2) === g.key ? "selected" : ""}>${g.label}</option>`).join("")}
+            </select>
+          </div>`).join("")}
+      </div>
+    </details>`;
+}
+
+function renderPlanSavings() {
   const salary = effSalary(state.ym);
   const year = yearOf(state.ym);
+  const t = effTargets(state.ym);
+  const A_ = annualStats(year);
+  const ms = data.savings[state.ym] || {};
   const annual = annualSavingsByBucket(year);
-  const annualGrand = Object.values(annual).reduce((a, b) => a + b, 0);
-  const corpusTotal = SAVING_BUCKETS.reduce((s, b) => s + (Number(data.corpus[b.key]) || 0), 0);
+
+  const mPct = Number(t.savMonthly) || 0;
+  const mAmt = salary * mPct / 100;
+  const mActual = savedTotal();
+  const mShort = mAmt > 0 && mActual < mAmt;
+
+  const aPct = Number(t.savAnnual) || 0;
+  const aAmt = A_.earned * aPct / 100;
+  const aActual = A_.saved;
+  const aShort = aAmt > 0 && aActual < aAmt;
 
   const contribRows = SAVING_BUCKETS.map(b => {
     const v = ms[b.key];
@@ -744,7 +919,75 @@ function renderSavings() {
       </div>`;
   }).join("");
 
-  const corpusRows = SAVING_BUCKETS.map(b => `
+  return `
+    <div class="card">
+      <div class="card-head"><h3>Estimated monthly savings</h3></div>
+      <div class="card-sub">Your savings targets as a % of income. They carry forward until you change them.</div>
+      <div class="card-body">
+        <div class="group-block">
+          <div class="group-head">
+            <div class="group-name">Monthly target<small>% of this month's salary${salary > 0 ? " (" + inr(salary) + ")" : ""}</small></div>
+            <div class="pct-input">
+              <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${t.savMonthly ?? ""}"
+                oninput="A.setSavTarget('savMonthly', this.value)" onchange="A.refresh()" />
+              <span>%</span>
+            </div>
+          </div>
+          ${mPct > 0 && salary > 0 ? `
+            <div class="cat-bar" style="margin-top:8px"><div style="width:${Math.min(mActual / mAmt * 100, 100)}%;background:${GROUP_COLORS.savings}"></div></div>
+            <div class="target-detail">
+              <span>Target: <b>${inr(mAmt)}</b> · Saved: <b>${inr(mActual)}</b></span>
+              <span>${mShort ? inr(mAmt - mActual) + " to go" : "Target met ✓"}</span>
+            </div>` : ""}
+        </div>
+        <div class="group-block" style="margin-bottom:0">
+          <div class="group-head">
+            <div class="group-name">Annual target<small>% of ${year} earnings so far (${inr(A_.earned)})</small></div>
+            <div class="pct-input">
+              <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${t.savAnnual ?? ""}"
+                oninput="A.setSavTarget('savAnnual', this.value)" onchange="A.refresh()" />
+              <span>%</span>
+            </div>
+          </div>
+          ${aPct > 0 && A_.earned > 0 ? `
+            <div class="cat-bar" style="margin-top:8px"><div style="width:${Math.min(aActual / aAmt * 100, 100)}%;background:${GROUP_COLORS.savings}"></div></div>
+            <div class="target-detail">
+              <span>Target: <b>${inr(aAmt)}</b> · Saved: <b>${inr(aActual)}</b></span>
+              <span>${aShort ? inr(aAmt - aActual) + " to go" : "Target met ✓"}</span>
+            </div>` : ""}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>This month's contributions</h3><span class="big-num">${inr(mActual)}</span></div>
+      <div class="card-sub">What you actually put away in ${monthLabel(state.ym)}, per bucket. Saves as you type.</div>
+      <div class="card-body">${contribRows}</div>
+    </div>`;
+}
+
+function renderPlanOverall() {
+  const year = yearOf(state.ym);
+  const annual = annualSavingsByBucket(year);
+  const allTime = allTimeSavingsByBucket();
+  const annualGrand = Object.values(annual).reduce((a, b) => a + b, 0);
+  const allGrand = Object.values(allTime).reduce((a, b) => a + b, 0);
+  const corpusTotal = SAVING_BUCKETS.reduce((s, b) => s + (Number(data.corpus[b.key]) || 0), 0);
+
+  const bucketRows = SAVING_BUCKETS.map(b => `
+    <div class="bucket-row">
+      <span class="bucket-label" style="font-weight:400">${b.label}</span>
+      <span class="entry-amt">${inr(annual[b.key])}<small style="color:var(--slate);font-family:'Instrument Sans',sans-serif;margin-left:6px">all-time ${inrShort(allTime[b.key])}</small></span>
+    </div>`).join("");
+
+  /* month-wise history for the selected year */
+  const histRows = yearMonths(year).slice().reverse().map(ym => {
+    const v = savedIn(ym);
+    return `<div class="mode-row"><span>${monthLabel(ym)}</span><span>${v > 0 ? inr(v) : "—"}</span></div>`;
+  }).join("");
+
+  /* current holdings */
+  const holdingRows = SAVING_BUCKETS.map(b => `
     <div class="bucket-row">
       <span class="bucket-label" style="font-weight:400">${b.label}</span>
       <input class="mono" type="number" inputmode="decimal" placeholder="0" value="${data.corpus[b.key] ?? ""}"
@@ -752,204 +995,94 @@ function renderSavings() {
     </div>`).join("");
 
   return `
-    <div class="card">
-      <div class="card-head"><h3>Saved this month</h3><span class="big-num">${inr(savedTotal())}</span></div>
-      <div class="card-sub">${salary > 0 ? pctOf(savedTotal(), salary) + " of salary going into savings" : "Set your salary in the Budget tab to see savings rate"}</div>
-      <div class="card-body" style="font-size:13px;color:var(--slate)">
-        ${year} total so far: <b style="font-family:'IBM Plex Mono',monospace;color:var(--ink)">${inr(annualGrand)}</b>
-      </div>
+    <div class="stat-grid" style="margin-top:14px">
+      <div class="stat"><label>Saved in ${year}</label><b>${inr(annualGrand)}</b><small>contributions this year</small></div>
+      <div class="stat"><label>Saved all-time</label><b>${inr(allGrand)}</b><small>since ${monthLabel(firstDataMonth())}</small></div>
     </div>
 
     <div class="card">
-      <div class="card-head"><h3>Contributions — ${monthLabel(state.ym)}</h3></div>
-      <div class="card-sub">What you put in this month, per bucket. Saves as you type.</div>
-      <div class="card-body">${contribRows}</div>
+      <div class="card-head"><h3>Contributions by bucket — ${year}</h3></div>
+      <div class="card-body">${bucketRows}</div>
     </div>
 
     <div class="card">
-      <div class="card-head"><h3>Where you stand</h3>${corpusTotal > 0 ? `<span class="big-num" style="font-size:16px">${inr(corpusTotal)}</span>` : ""}</div>
-      <div class="card-sub">Current value of each bucket — update whenever you check your accounts. Feeds Corpus Planning in the Budget tab.</div>
-      <div class="card-body">${corpusRows}</div>
+      <div class="card-head"><h3>Current holdings</h3><span class="big-num" style="font-size:16px">${inr(corpusTotal)}</span></div>
+      <div class="card-sub">Present value of each bucket — update whenever you check your accounts. Feeds the Corpus view and your net worth.</div>
+      <div class="card-body">${holdingRows}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Monthly history — ${year}</h3></div>
+      <div class="card-body">${histRows || '<p class="empty">No months recorded yet this year.</p>'}</div>
     </div>`;
 }
 
-function renderBudget() {
-  const salary = effSalary(state.ym);
-  const year = yearOf(state.ym);
-  const A_ = annualStats(year);
-  const range = state.targetRange;
-  const isMonth = range === "month";
-  const income = isMonth ? salary : A_.earned;
-  const incomeLabel = isMonth ? monthLabel(state.ym) : year + (year === yearOf(ymNow()) ? " (YTD)" : "");
-  const gs = groupSpend(range);
-  const t = data.targets || {};
-
-  const groupRows = GROUPS.map(g => {
-    const target = Number(t[g.key]) || 0;
-    const targetAmt = income * target / 100;
-    const actual = gs[g.key];
-    const actualPct = income > 0 ? actual / income * 100 : 0;
-    const over = target > 0 && actual > targetAmt;
-    const width = target > 0 ? Math.min(actual / targetAmt * 100, 100) : 0;
-    return `
-      <div class="target-row">
-        <div class="target-top">
-          <div class="target-name">${g.label}<small>${g.hint}</small></div>
-          <div class="pct-input">
-            <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${t[g.key] ?? ""}"
-              oninput="A.setTarget('${g.key}', this.value)" onchange="A.refresh()" />
-            <span>%</span>
-          </div>
-        </div>
-        ${target > 0 ? `
-          <div class="cat-bar" style="margin-top:8px"><div style="width:${width}%;background:${over ? "var(--c-over)" : GROUP_COLORS[g.key]}"></div></div>
-          <div class="target-detail">
-            <span>Actual: <b>${inr(actual)}</b> (${actualPct.toFixed(1)}%)</span>
-            <span style="${over ? "color:var(--c-over)" : ""}">${over ? "Over by " + inr(actual - targetAmt) : "Target: " + inr(targetAmt)}</span>
-          </div>` : `
-          <div class="target-detail"><span>Actual: <b>${inr(actual)}</b>${income > 0 ? " (" + actualPct.toFixed(1) + "% of income)" : ""}</span><span>Set a target %</span></div>`}
-      </div>`;
-  }).join("");
-
-  /* savings target — annual by definition */
-  const savTarget = Number(t.savingsAnnual) || 0;
-  const savTargetAmt = A_.earned * savTarget / 100;
-  const savActual = A_.saved;
-  const savShort = savTarget > 0 && savActual < savTargetAmt;
-  const savWidth = savTarget > 0 ? Math.min(savActual / savTargetAmt * 100, 100) : 0;
-  const savRow = `
-    <div class="target-row" style="border-bottom:none">
-      <div class="target-top">
-        <div class="target-name">Savings target<small>Annual — % of the year's earnings you want saved</small></div>
-        <div class="pct-input">
-          <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${t.savingsAnnual ?? ""}"
-            oninput="A.setTarget('savingsAnnual', this.value)" onchange="A.refresh()" />
-          <span>%</span>
-        </div>
-      </div>
-      ${savTarget > 0 ? `
-        <div class="cat-bar" style="margin-top:8px"><div style="width:${savWidth}%;background:${GROUP_COLORS.savings}"></div></div>
-        <div class="target-detail">
-          <span>Saved in ${year}: <b>${inr(savActual)}</b> (${pctOf(savActual, A_.earned) || "0%"})</span>
-          <span>${savShort ? inr(savTargetAmt - savActual) + " to go" : "Target met ✓"}</span>
-        </div>` : `
-        <div class="target-detail"><span>Saved in ${year}: <b>${inr(savActual)}</b></span><span>Set a target %</span></div>`}
-    </div>`;
-
-  /* corpus planning */
+function renderPlanCorpus() {
   const a = data.assets || {};
   const c = data.corpus || {};
   const emergency = Number(c.bank) || 0;
-  const savingsCorpus = (Number(c.mf) || 0) + (Number(c.shares) || 0) + (Number(c.rd) || 0) + (Number(c.fd) || 0);
-  const housing = Number(a.housing) || 0;
-  const gold = Number(a.gold) || 0;
-  const property = Number(a.property) || 0;
-  const netWorth = emergency + savingsCorpus + housing + gold + property;
+  const investCorpus = (Number(c.mf) || 0) + (Number(c.shares) || 0) + (Number(c.rd) || 0) + (Number(c.fd) || 0);
 
-  const corpusRow = (label, sub, valueHtml) => `
-    <div class="bucket-row">
-      <div style="flex:1"><div class="bucket-label">${label}</div>${sub ? `<div class="bucket-sub">${sub}</div>` : ""}</div>
-      ${valueHtml}
-    </div>`;
+  /* built-in corpus rows: [label, sub, actualValue, isAuto, valueKey, goalKey] */
+  const items = [
+    { label: "Housing Fund", sub: "Set aside for a home", value: Number(a.housing) || 0, auto: false, vKey: "housing", gKey: "housingTarget", goal: a.housingTarget },
+    { label: "Emergency Fund", sub: "Cash in Bank — auto from Overall", value: emergency, auto: true, gKey: "emergencyTarget", goal: a.emergencyTarget },
+    { label: "Savings", sub: "MF + Shares + RD + FD — auto from Overall", value: investCorpus, auto: true, gKey: "savingsTarget", goal: a.savingsTarget },
+    { label: "Gold", sub: "Current value of what you own", value: Number(a.gold) || 0, auto: false, vKey: "gold", gKey: "goldTarget", goal: a.goldTarget },
+    { label: "Property", sub: "Current value", value: Number(a.property) || 0, auto: false, vKey: "property", gKey: "propertyTarget", goal: a.propertyTarget },
+  ];
 
-  const fundBar = (val, target) => {
-    if (!(Number(target) > 0)) return "";
-    const w = Math.min(val / target * 100, 100);
-    return `<div class="cat-bar" style="margin:2px 0 8px"><div style="width:${w}%;background:${GROUP_COLORS.savings}"></div></div>
-      <div class="bucket-sub" style="margin-bottom:8px">${val >= target ? "Goal reached ✓" : inr(target - val) + " to go of " + inr(target) + " goal"}</div>`;
+  const customVal = data.customCorpus.reduce((s, x) => s + (Number(x.value) || 0), 0);
+  const netWorth = items.reduce((s, x) => s + x.value, 0) + customVal;
+
+  const rowHtml = (label, sub, goalInput, valueDisplay, goal, value, delBtn) => {
+    const g = Number(goal) || 0;
+    const bar = g > 0 ? `
+      <div class="cat-bar" style="margin:4px 0 2px"><div style="width:${Math.min(value / g * 100, 100)}%;background:${GROUP_COLORS.savings}"></div></div>
+      <div class="bucket-sub" style="margin-bottom:6px">${value >= g ? "Goal reached ✓" : inr(g - value) + " to go of " + inr(g) + " estimate"}</div>` : "";
+    return `
+      <div style="padding:10px 0;border-bottom:1px solid var(--mist)">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <div style="flex:1"><div class="bucket-label">${label}${delBtn || ""}</div><div class="bucket-sub">${sub}</div></div>
+        </div>
+        <div class="row2" style="margin-top:8px;align-items:center">
+          <div style="flex:1"><div class="bucket-sub">Estimate to save</div>${goalInput}</div>
+          <div style="flex:1"><div class="bucket-sub">Actually saved</div>${valueDisplay}</div>
+        </div>
+        ${bar}
+      </div>`;
   };
 
-  const budgetLines = data.categories.map((c2, i) => `
-    <div class="budget-line">
-      <span>${esc(c2)}</span>
-      <input id="budget-${i}" class="mono" type="number" inputmode="decimal" placeholder="—" value="${data.budgets[c2] ?? ""}"
-        oninput="A.setBudget('${esc(c2)}', this.value)" onchange="A.refresh()" />
-    </div>`).join("");
+  const builtinRows = items.map(it => rowHtml(
+    it.label, it.sub,
+    `<input class="mono" type="number" inputmode="decimal" placeholder="—" value="${a[it.gKey] ?? ""}" oninput="A.setAsset('${it.gKey}', this.value)" onchange="A.refresh()" style="text-align:right" />`,
+    it.auto
+      ? `<div class="entry-amt" style="padding:10px 0">${inr(it.value)}</div>`
+      : `<input class="mono" type="number" inputmode="decimal" placeholder="0" value="${a[it.vKey] ?? ""}" oninput="A.setAsset('${it.vKey}', this.value)" onchange="A.refresh()" style="text-align:right" />`,
+    it.goal, it.value
+  )).join("");
 
-  const mapRows = data.categories.map(c2 => `
-    <div class="map-row">
-      <span>${esc(c2)}</span>
-      <select onchange="A.setGroupFor('${esc(c2)}', this.value)">
-        ${GROUPS.map(g => `<option value="${g.key}" ${groupOf(c2) === g.key ? "selected" : ""}>${g.label}</option>`).join("")}
-      </select>
-    </div>`).join("");
+  const customRows = data.customCorpus.map(x => rowHtml(
+    esc(x.label), "Custom corpus",
+    `<input class="mono" type="number" inputmode="decimal" placeholder="—" value="${x.goal ?? ""}" oninput="A.setCustomCorpus('${x.id}', 'goal', this.value)" onchange="A.refresh()" style="text-align:right" />`,
+    `<input class="mono" type="number" inputmode="decimal" placeholder="0" value="${x.value ?? ""}" oninput="A.setCustomCorpus('${x.id}', 'value', this.value)" onchange="A.refresh()" style="text-align:right" />`,
+    x.goal, Number(x.value) || 0,
+    ` <button class="del-btn" onclick="A.deleteCustomCorpus('${x.id}')" aria-label="Delete">×</button>`
+  )).join("");
 
   return `
     <div class="card">
-      <div class="card-head"><h3>Salary</h3></div>
-      <div class="card-sub">In-hand monthly salary, effective from ${monthLabel(state.ym)} onwards. Past months keep their old figure.</div>
-      <div class="card-body">
-        <div class="row2">
-          <input id="salary-in" class="mono" type="number" inputmode="decimal" placeholder="e.g. 300000" value="${salary || ""}" />
-          <button class="primary-btn" style="width:auto;margin-top:0" onclick="A.saveSalary()">Save</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-head">
-        <h3>Spend targets</h3>
-        <span class="seg">
-          <button class="${isMonth ? "active" : ""}" onclick="A.setTargetRange('month')">Monthly</button>
-          <button class="${!isMonth ? "active" : ""}" onclick="A.setTargetRange('year')">Annual</button>
-        </span>
-      </div>
-      <div class="card-sub">Set a target % of income for each area — bars show how you're faring against it for ${incomeLabel}.</div>
-      <div class="card-body">
-        ${income > 0 ? "" : '<p class="empty" style="margin-bottom:10px">Set your salary above first — targets are calculated as a % of income.</p>'}
-        ${groupRows}
-        ${savRow}
-      </div>
-    </div>
-
-    <div class="card">
       <div class="card-head"><h3>Corpus planning</h3></div>
-      <div class="card-sub">Your long-term picture. Emergency fund and savings pull from the Savings tab automatically.</div>
+      <div class="card-sub">For each corpus: what you estimate to save, and what you've actually saved so far. Only the actual amounts count toward net worth.</div>
       <div class="card-body">
-        ${corpusRow("Housing Fund", "What you've set aside for a home",
-          `<input class="mono" type="number" inputmode="decimal" placeholder="0" value="${a.housing ?? ""}" oninput="A.setAsset('housing', this.value)" onchange="A.refresh()" style="width:130px;text-align:right" />`)}
-        <div class="row2" style="margin:6px 0 4px;align-items:center">
-          <span class="bucket-sub" style="flex:1">Housing goal (optional)</span>
-          <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${a.housingTarget ?? ""}" oninput="A.setAsset('housingTarget', this.value)" onchange="A.refresh()" style="width:130px;text-align:right" />
+        ${builtinRows}
+        ${customRows}
+        <div class="row2" style="margin-top:12px">
+          <input id="corpus-new" placeholder="Add a corpus, e.g. Car Fund" />
+          <button class="primary-btn quiet-btn" style="width:auto;margin-top:0" onclick="A.addCustomCorpus()">Add</button>
         </div>
-        ${fundBar(housing, a.housingTarget)}
-
-        ${corpusRow("Emergency Fund", "Cash in Bank, from Savings tab",
-          `<span class="entry-amt">${inr(emergency)}</span>`)}
-        <div class="row2" style="margin:6px 0 4px;align-items:center">
-          <span class="bucket-sub" style="flex:1">Emergency goal (optional)</span>
-          <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${a.emergencyTarget ?? ""}" oninput="A.setAsset('emergencyTarget', this.value)" onchange="A.refresh()" style="width:130px;text-align:right" />
-        </div>
-        ${fundBar(emergency, a.emergencyTarget)}
-
-        ${corpusRow("Savings", "MF + Shares + RD + FD, from Savings tab",
-          `<span class="entry-amt">${inr(savingsCorpus)}</span>`)}
-        ${corpusRow("Gold", "Current value of what you own",
-          `<input class="mono" type="number" inputmode="decimal" placeholder="0" value="${a.gold ?? ""}" oninput="A.setAsset('gold', this.value)" onchange="A.refresh()" style="width:130px;text-align:right" />`)}
-        ${corpusRow("Property", "Current value",
-          `<input class="mono" type="number" inputmode="decimal" placeholder="0" value="${a.property ?? ""}" oninput="A.setAsset('property', this.value)" onchange="A.refresh()" style="width:130px;text-align:right" />`)}
-
         <div class="networth"><span>Total net worth</span><b>${inr(netWorth)}</b></div>
       </div>
-    </div>
-
-    <div class="card">
-      <div class="card-head"><h3>Category budgets</h3></div>
-      <div class="card-sub">Optional ₹ cap per category per month — powers the over-budget warnings in Expenses.</div>
-      <div class="card-body">
-        ${budgetLines}
-        <label class="field-label">Add a category</label>
-        <div class="row2" style="margin-top:0">
-          <input id="newcat-in" placeholder="e.g. Fitness" />
-          <button class="primary-btn quiet-btn" style="width:auto;margin-top:0" onclick="A.addCategory()">Add</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-head"><h3>Which category counts where</h3></div>
-      <div class="card-sub">Assign each category to a target area so the bars above stay accurate.</div>
-      <div class="card-body">${mapRows}</div>
     </div>`;
 }
 
@@ -965,15 +1098,13 @@ function render() {
     <main>
       ${state.tab === "dashboard" ? renderDashboard()
         : state.tab === "expenses" ? renderExpenses()
-        : state.tab === "savings" ? renderSavings()
-        : renderBudget()}
+        : renderPlan()}
     </main>
 
     <nav class="tabs">
       <button class="${state.tab === "dashboard" ? "active" : ""}" onclick="A.setTab('dashboard')">Dashboard</button>
       <button class="${state.tab === "expenses" ? "active" : ""}" onclick="A.setTab('expenses')">Expenses</button>
-      <button class="${state.tab === "savings" ? "active" : ""}" onclick="A.setTab('savings')">Savings</button>
-      <button class="${state.tab === "budget" ? "active" : ""}" onclick="A.setTab('budget')">Budget</button>
+      <button class="${state.tab === "plan" ? "active" : ""}" onclick="A.setTab('plan')">Plan</button>
     </nav>`;
 
   const amt = document.getElementById("amt-in");
