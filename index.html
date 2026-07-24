@@ -26,6 +26,8 @@
   --c-spent: #E2A23B;
   --c-saved: #2E7D5B;
   --c-over: #C05340;
+  --c-warn: #D4A017;
+  --c-ok: #2E7D5B;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -43,6 +45,8 @@ body { background: var(--paper); font-family: 'Instrument Sans', sans-serif; col
 h3 { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; }
 
 .ghost-btn { background: none; border: none; color: var(--ink); text-decoration: underline; font-family: inherit; font-weight: 600; font-size: 13px; cursor: pointer; padding: 0; }
+.mini-btn { background: none; border: none; color: var(--slate); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; padding: 2px 4px; }
+.mini-btn:active { color: var(--ink); }
 
 .month-bar { display: flex; align-items: center; justify-content: space-between; background: var(--white); border: 1px solid var(--black); border-radius: 12px; padding: 6px 8px; }
 .month-bar button { background: none; border: none; font-size: 20px; color: var(--ink); cursor: pointer; padding: 2px 12px; line-height: 1; }
@@ -59,6 +63,21 @@ h3 { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; }
 .stat label { font-size: 11px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: 0.05em; }
 .stat b { display: block; font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 17px; margin-top: 4px; }
 .stat small { font-size: 11px; color: var(--slate); }
+
+/* budget-left tiles */
+.bucket-tile { background: var(--white); border: 1px solid var(--line); border-top: 3px solid var(--line); border-radius: 14px; padding: 11px 13px; }
+.bucket-tile.ok { border-top-color: var(--c-ok); }
+.bucket-tile.warn { border-top-color: var(--c-warn); }
+.bucket-tile.over { border-top-color: var(--c-over); }
+.bucket-tile label { font-size: 11px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: 0.04em; }
+.bucket-tile b { display: block; font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 16px; margin-top: 3px; }
+.bucket-tile.ok b { color: var(--c-ok); }
+.bucket-tile.warn b { color: var(--c-warn); }
+.bucket-tile.over b { color: var(--c-over); }
+.bucket-tile .tile-bar { height: 5px; background: var(--mist); border-radius: 3px; margin-top: 7px; overflow: hidden; }
+.bucket-tile .tile-bar > div { height: 100%; border-radius: 3px; }
+.bucket-tile small { display: block; font-size: 10.5px; color: var(--slate); margin-top: 5px; }
+.bucket-tile small.recover { color: var(--c-over); font-weight: 600; }
 
 .seg { display: inline-flex; background: var(--mist); border-radius: 9px; padding: 3px; }
 .seg button { border: none; background: none; padding: 5px 12px; border-radius: 7px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--slate); cursor: pointer; }
@@ -85,6 +104,7 @@ h3 { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; }
 .note-text { flex: 1; font-size: 14px; line-height: 1.45; word-break: break-word; }
 .note-text.done { text-decoration: line-through; color: var(--slate); }
 .note-ts { font-size: 11px; color: var(--slate); margin-top: 2px; }
+.note-actions { display: flex; gap: 8px; margin-top: 3px; }
 .del-btn { background: none; border: none; color: var(--slate); font-size: 18px; cursor: pointer; padding: 0 2px; line-height: 1; }
 
 input, select {
@@ -133,7 +153,6 @@ input[type=file] { display: none; }
 
 .empty { font-size: 13px; color: var(--slate); }
 
-/* targets */
 .group-block { border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
 .group-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .group-name { font-size: 14px; font-weight: 600; flex: 1; }
@@ -143,6 +162,9 @@ input[type=file] { display: none; }
 .pct-input span { font-size: 13px; color: var(--slate); }
 .target-detail { display: flex; justify-content: space-between; font-size: 12px; color: var(--slate); margin-top: 6px; flex-wrap: wrap; gap: 4px; }
 .target-detail b { font-family: 'IBM Plex Mono', monospace; color: var(--ink); font-weight: 500; }
+.alloc-line { font-size: 12px; color: var(--slate); margin-top: 8px; font-family: 'IBM Plex Mono', monospace; }
+.alloc-line.overalloc { color: var(--c-over); }
+.recover-line { font-size: 12px; color: var(--c-over); font-weight: 600; margin-top: 6px; }
 .subcat { padding: 7px 0 0 10px; border-left: 2px solid var(--mist); margin-top: 8px; }
 .subcat-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 4px 0; }
 .subcat-name { font-size: 13px; flex: 1; }
@@ -199,10 +221,11 @@ const SAVING_BUCKETS = [
   { key: "rd", label: "RD" },
   { key: "fd", label: "FD" },
 ];
+const INVEST_KEYS = ["mf", "shares", "rd", "fd"]; /* what counts toward the monthly savings estimate */
 const GROUPS = [
-  { key: "living", label: "Living expenses", hint: "Rent, groceries, utilities, essentials" },
-  { key: "leisure", label: "Travelling / Leisure", hint: "Travel, eating out, shopping" },
-  { key: "support", label: "Support expenses", hint: "Help salaries and support you give" },
+  { key: "living", label: "Living expenses", short: "Living", hint: "Rent, groceries, utilities, essentials" },
+  { key: "leisure", label: "Travelling / Leisure", short: "Travel", hint: "Travel, eating out, shopping" },
+  { key: "support", label: "Support expenses", short: "Support", hint: "Help salaries and support you give" },
 ];
 const GROUP_COLORS = { living: "#5B7DB5", leisure: "#E2A23B", support: "#8A6FB2", savings: "#2E7D5B" };
 const DEFAULT_GROUP_MAP = {
@@ -223,16 +246,13 @@ function loadData() {
     if (raw) d = Object.assign(emptyData(), JSON.parse(raw));
   } catch (e) { /* unavailable */ }
   if (!d) d = memStore || emptyData();
-  /* migrations from earlier versions */
   if (!d.salaryByMonth) d.salaryByMonth = {};
-  if (Number(d.salary) > 0 && Object.keys(d.salaryByMonth).length === 0) {
-    d.salaryByMonth[ymNow()] = Number(d.salary);
-  }
+  if (Number(d.salary) > 0 && Object.keys(d.salaryByMonth).length === 0) d.salaryByMonth[ymNow()] = Number(d.salary);
   if (!d.targetsByMonth) d.targetsByMonth = {};
   if (d.targets && Object.keys(d.targets).length && Object.keys(d.targetsByMonth).length === 0) {
     d.targetsByMonth[ymNow()] = {
       groups: { living: d.targets.living ?? "", leisure: d.targets.leisure ?? "", support: d.targets.support ?? "" },
-      savMonthly: "", savAnnual: d.targets.savingsAnnual ?? "", cats: {},
+      savMonthly: "", cats: {},
     };
   }
   if (!d.customCorpus) d.customCorpus = [];
@@ -257,10 +277,11 @@ function emptyData() {
 const inr = n => "₹" + (Number(n) || 0).toLocaleString("en-IN", { maximumFractionDigits: 0 });
 const inrShort = n => {
   n = Number(n) || 0;
-  if (n >= 1e7) return "₹" + (n / 1e7).toFixed(1).replace(/\.0$/, "") + "Cr";
-  if (n >= 1e5) return "₹" + (n / 1e5).toFixed(1).replace(/\.0$/, "") + "L";
-  if (n >= 1e3) return "₹" + (n / 1e3).toFixed(0) + "k";
-  return "₹" + n;
+  const neg = n < 0 ? "−" : ""; n = Math.abs(n);
+  if (n >= 1e7) return neg + "₹" + (n / 1e7).toFixed(1).replace(/\.0$/, "") + "Cr";
+  if (n >= 1e5) return neg + "₹" + (n / 1e5).toFixed(1).replace(/\.0$/, "") + "L";
+  if (n >= 1e3) return neg + "₹" + (n / 1e3).toFixed(0) + "k";
+  return neg + "₹" + n;
 };
 const pctOf = (part, whole) => (!whole || whole <= 0) ? "" : ((part / whole) * 100).toFixed(1) + "%";
 const ymNow = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"); };
@@ -274,7 +295,7 @@ const fmtTs = iso => new Date(iso).toLocaleString("en-IN", { day: "numeric", mon
 
 /* ---------------- state ---------------- */
 let data = loadData();
-let state = { tab: "dashboard", ym: ymNow(), showAllEntries: false, donutRange: "month", noteType: "todo", planSeg: "budget", openGroup: "living" };
+let state = { tab: "dashboard", ym: ymNow(), showAllEntries: false, donutRange: "month", noteType: "todo", planSeg: "budget", openGroup: "living", editingNote: null };
 let draft = { amount: "", category: data.categories[0] || "Miscellaneous", mode: "UPI", note: "" };
 
 function commit() { saveData(data); render(); }
@@ -284,12 +305,12 @@ function expensesFor(ym) { return data.expenses[ym] || []; }
 function monthExpenses() { return expensesFor(state.ym); }
 function spentIn(ym) { return expensesFor(ym).reduce((s, e) => s + e.amount, 0); }
 function savedIn(ym) { const v = data.savings[ym] || {}; return SAVING_BUCKETS.reduce((s, b) => s + (Number(v[b.key]) || 0), 0); }
+function investedIn(ym) { const v = data.savings[ym] || {}; return INVEST_KEYS.reduce((s, k) => s + (Number(v[k]) || 0), 0); }
 function spentTotal() { return spentIn(state.ym); }
 function savedTotal() { return savedIn(state.ym); }
 function catColor(cat) { const i = data.categories.indexOf(cat); return CAT_COLORS[(i < 0 ? 0 : i) % CAT_COLORS.length]; }
 function groupOf(cat) { return (data.groupMap && data.groupMap[cat]) || DEFAULT_GROUP_MAP[cat] || "living"; }
 
-/* first month that has any recorded data — the app's "start" */
 function firstDataMonth() {
   const keys = [];
   for (const [k, v] of Object.entries(data.expenses)) if (v && v.length) keys.push(k);
@@ -298,7 +319,6 @@ function firstDataMonth() {
   return keys.length ? keys.sort()[0] : state.ym;
 }
 
-/* salary: explicit per-month entries; carries forward from the last entry, but never before the first entry */
 function effSalary(ym) {
   const hist = data.salaryByMonth || {};
   const keys = Object.keys(hist).filter(k => k <= ym && Number(hist[k]) > 0).sort();
@@ -307,12 +327,17 @@ function effSalary(ym) {
 }
 function salaryIsExplicit(ym) { return Number((data.salaryByMonth || {})[ym]) > 0; }
 
-/* targets: per-month with carry-forward */
 function effTargets(ym) {
   const hist = data.targetsByMonth || {};
   const keys = Object.keys(hist).filter(k => k <= ym).sort();
   if (keys.length) return hist[keys[keys.length - 1]];
-  return { groups: { living: "", leisure: "", support: "" }, savMonthly: "", savAnnual: "", cats: {} };
+  return { groups: { living: "", leisure: "", support: "" }, savMonthly: "", cats: {} };
+}
+function targetsSource(ym) {
+  const hist = data.targetsByMonth || {};
+  if (hist[ym]) return "this";
+  const keys = Object.keys(hist).filter(k => k <= ym).sort();
+  return keys.length ? keys[keys.length - 1] : null;
 }
 function stampTargets(mut) {
   const t = JSON.parse(JSON.stringify(effTargets(state.ym)));
@@ -324,12 +349,23 @@ function stampTargets(mut) {
 }
 
 function yearMonths(year) {
-  const now = ymNow(), first = firstDataMonth();
+  const first = firstDataMonth();
+  /* the window ends at the LATEST of: today, the month being viewed, or the last month with data —
+     so planning ahead (e.g. entering August while it's still July) is counted correctly */
+  let last = ymNow();
+  if (yearOf(state.ym) === year && state.ym > last) last = state.ym;
+  const dataMonths = [
+    ...Object.keys(data.expenses),
+    ...Object.keys(data.savings),
+    ...Object.keys(data.salaryByMonth || {}),
+  ].filter(k => yearOf(k) === year);
+  for (const k of dataMonths) if (k > last) last = k;
+
   const out = [];
   for (let m = 1; m <= 12; m++) {
     const ym = year + "-" + String(m).padStart(2, "0");
-    if (ym > now) break;
     if (ym < first) continue;
+    if (ym > last) break;
     out.push(ym);
   }
   return out;
@@ -359,6 +395,24 @@ function catSpendIn(ym) {
   return out;
 }
 
+function groupBudgetIn(ym, gKey) {
+  const t = effTargets(ym);
+  const pct = Number(t.groups[gKey]) || 0;
+  return effSalary(ym) * pct / 100;
+}
+
+/* cumulative balance for a group through the selected month: positive = headroom banked, negative = overflow to recover */
+function groupCumBalance(gKey) {
+  let bal = 0;
+  let m = firstDataMonth();
+  while (m <= state.ym) {
+    const b = groupBudgetIn(m, gKey);
+    if (b > 0) bal += b - (groupSpendIn(m)[gKey] || 0);
+    m = shiftMonth(m, 1);
+  }
+  return bal;
+}
+
 function annualSavingsByBucket(year) {
   const t = {}; SAVING_BUCKETS.forEach(b => t[b.key] = 0);
   for (const [m, vals] of Object.entries(data.savings)) {
@@ -375,7 +429,6 @@ function allTimeSavingsByBucket() {
   return t;
 }
 
-/* category ₹ target for a month = income × group% × cat%-of-group */
 function catTargetAmt(ym, cat) {
   const t = effTargets(ym);
   const income = effSalary(ym);
@@ -385,53 +438,56 @@ function catTargetAmt(ym, cat) {
   return income * gPct / 100 * cPct / 100;
 }
 
-/* ---------------- SVG charts ---------------- */
-function donutSVG(segs) {
-  const total = segs.reduce((s, x) => s + x.value, 0);
-  if (!total) return "";
-  const r = 50, cx = 75, cy = 75, circ = 2 * Math.PI * r;
-  let off = 0, circles = "";
-  segs.forEach(s => {
-    const frac = s.value / total;
-    circles += `<circle r="${r}" cx="${cx}" cy="${cy}" fill="none" stroke="${s.color}" stroke-width="24"
-      stroke-dasharray="${(frac * circ).toFixed(2)} ${circ.toFixed(2)}" stroke-dashoffset="${(-off * circ).toFixed(2)}"
-      transform="rotate(-90 ${cx} ${cy})"/>`;
-    off += frac;
+/* ---------------- live DOM patches (keep focus while typing) ---------------- */
+function patchBudgetLive() {
+  const salary = effSalary(state.ym);
+  const t = effTargets(state.ym);
+  document.querySelectorAll("[data-catcalc]").forEach(el => {
+    const cat = el.getAttribute("data-catcalc");
+    const g = groupOf(cat);
+    const gAmt = salary * (Number(t.groups[g]) || 0) / 100;
+    const cPct = Number((t.cats || {})[cat]) || 0;
+    el.textContent = (cPct > 0 && gAmt > 0) ? "= " + inr(gAmt * cPct / 100) : "";
   });
-  return `<svg viewBox="0 0 150 150" width="140" height="140" style="flex-shrink:0">
-    ${circles}
-    <text x="75" y="71" text-anchor="middle" font-size="11" fill="#6E6E6E" font-family="Instrument Sans, sans-serif">Total</text>
-    <text x="75" y="89" text-anchor="middle" font-size="14" font-weight="600" fill="#111" font-family="IBM Plex Mono, monospace">${inrShort(total)}</text>
-  </svg>`;
+  GROUPS.forEach(g => {
+    const el = document.querySelector('[data-alloc="' + g.key + '"]');
+    if (!el) return;
+    const gAmt = salary * (Number(t.groups[g.key]) || 0) / 100;
+    const cats = data.categories.filter(c => groupOf(c) === g.key);
+    const sumPct = cats.reduce((s, c) => s + (Number((t.cats || {})[c]) || 0), 0);
+    if (gAmt > 0) {
+      const allocAmt = gAmt * sumPct / 100;
+      const freePct = 100 - sumPct;
+      el.textContent = "Allocated " + sumPct.toFixed(0) + "% (" + inr(allocAmt) + ") · " +
+        (freePct >= 0 ? freePct.toFixed(0) + "% (" + inr(gAmt - allocAmt) + ") free to assign"
+                      : "over-allocated by " + Math.abs(freePct).toFixed(0) + "% (" + inr(allocAmt - gAmt) + ")");
+      el.classList.toggle("overalloc", freePct < 0);
+    } else {
+      el.textContent = "";
+    }
+    const budEl = document.querySelector('[data-gbudget="' + g.key + '"]');
+    if (budEl) budEl.textContent = gAmt > 0 ? inr(gAmt) : "—";
+  });
 }
 
-function trendBarsSVG() {
-  /* window: from first data month (or 12 months back, whichever is later) to selected month */
-  const first = firstDataMonth();
-  const months = [];
-  let m = shiftMonth(state.ym, -11);
-  if (m < first) m = first;
-  while (m <= state.ym) { months.push(m); m = shiftMonth(m, 1); }
-  if (!months.length) months.push(state.ym);
-
-  const series = months.map(ym => ({ ym, spent: spentIn(ym), saved: savedIn(ym), salary: effSalary(ym) }));
-  const max = Math.max(1, ...series.map(s => Math.max(s.spent, s.saved, s.salary)));
-  const n = series.length;
-  const W = 340, H = 150, padL = 6, padB = 20, chartH = H - padB - 8;
-  const slot = (W - padL * 2) / n;
-  const barW = Math.max(6, Math.min(16, slot / 3));
-  const labelEvery = n > 8 ? 2 : 1;
-  let out = "";
-  series.forEach((s, i) => {
-    const x = padL + i * slot + slot / 2;
-    const hSpent = s.spent / max * chartH, hSaved = s.saved / max * chartH;
-    const ySal = 8 + chartH - (s.salary / max * chartH);
-    out += `<rect x="${(x - barW - 1).toFixed(1)}" y="${(8 + chartH - hSpent).toFixed(1)}" width="${barW}" height="${hSpent.toFixed(1)}" rx="2" fill="var(--c-spent)"/>`;
-    out += `<rect x="${(x + 1).toFixed(1)}" y="${(8 + chartH - hSaved).toFixed(1)}" width="${barW}" height="${hSaved.toFixed(1)}" rx="2" fill="var(--c-saved)"/>`;
-    if (s.salary > 0) out += `<line x1="${(x - barW - 3).toFixed(1)}" x2="${(x + barW + 3).toFixed(1)}" y1="${ySal.toFixed(1)}" y2="${ySal.toFixed(1)}" stroke="#111" stroke-width="1.4"/>`;
-    if (i % labelEvery === 0) out += `<text x="${x.toFixed(1)}" y="${H - 5}" text-anchor="middle" font-size="9" fill="#6E6E6E" font-family="Instrument Sans, sans-serif">${monthShort(s.ym)}${n > 12 || s.ym.endsWith("-01") ? " '" + s.ym.slice(2, 4) : ""}</text>`;
-  });
-  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">${out}</svg>`;
+function patchSavingsLive() {
+  const salary = effSalary(state.ym);
+  const t = effTargets(state.ym);
+  const pct = Number(t.savMonthly) || 0;
+  const target = salary * pct / 100;
+  const invested = investedIn(state.ym);
+  const left = target - invested;
+  const tgt = document.getElementById("sav-target-amt");
+  if (tgt) tgt.textContent = target > 0 ? inr(target) : "—";
+  const inv = document.getElementById("sav-invested");
+  if (inv) inv.textContent = inr(invested);
+  const lft = document.getElementById("sav-left");
+  if (lft) {
+    lft.textContent = target > 0 ? (left > 0 ? inr(left) + " left to invest" : "Target met ✓" + (left < 0 ? " (+" + inr(-left) + " extra)" : "")) : "";
+    lft.style.color = target > 0 && left <= 0 ? "var(--c-ok)" : "var(--ink)";
+  }
+  const bar = document.getElementById("sav-bar-fill");
+  if (bar && target > 0) bar.style.width = Math.min(invested / target * 100, 100) + "%";
 }
 
 /* ---------------- actions ---------------- */
@@ -465,13 +521,15 @@ window.A = {
     if (!data.savings[state.ym]) data.savings[state.ym] = {};
     data.savings[state.ym][key] = val === "" ? "" : (parseFloat(val) || 0);
     saveData(data);
+    patchSavingsLive();
   },
   setCorpus(key, val) {
     data.corpus[key] = val === "" ? "" : (parseFloat(val) || 0);
     saveData(data);
   },
 
-  setNoteType(t) { state.noteType = t; render(); },
+  /* notes */
+  setNoteType(t) { state.noteType = t; state.editingNote = null; render(); },
   addNote() {
     const el = document.getElementById("note-new");
     const text = el.value.trim();
@@ -485,10 +543,33 @@ window.A = {
   },
   deleteNote(id) {
     data.notes = (data.notes || []).filter(n => n.id !== id);
+    if (state.editingNote === id) state.editingNote = null;
     commit();
   },
+  startEditNote(id) { state.editingNote = id; render(); },
+  cancelEditNote() { state.editingNote = null; render(); },
+  saveEditNote(id) {
+    const el = document.getElementById("note-edit-" + id);
+    if (!el) return;
+    const text = el.value.trim();
+    const n = (data.notes || []).find(n => n.id === id);
+    if (n && text) { n.text = text; n.edited = new Date().toISOString(); }
+    state.editingNote = null;
+    commit();
+  },
+  copyNote(id) {
+    const n = (data.notes || []).find(n => n.id === id);
+    if (!n) return;
+    const done = () => {
+      const btn = document.getElementById("copy-" + id);
+      if (btn) { btn.textContent = "Copied ✓"; setTimeout(() => { if (btn) btn.textContent = "Copy"; }, 1200); }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(n.text).then(done).catch(() => fallbackCopy(n.text, done));
+    } else fallbackCopy(n.text, done);
+  },
 
-  /* plan tab */
+  /* plan */
   saveSalary() {
     const salary = parseFloat(document.getElementById("salary-in").value) || 0;
     if (salary > 0) data.salaryByMonth[state.ym] = salary;
@@ -499,9 +580,9 @@ window.A = {
     const s = effSalary(state.ym);
     if (s > 0) { data.salaryByMonth[state.ym] = s; commit(); }
   },
-  setGroupTarget(key, val) { stampTargets(t => { t.groups[key] = val === "" ? "" : (parseFloat(val) || 0); }); },
-  setCatTarget(cat, val) { stampTargets(t => { t.cats[cat] = val === "" ? "" : (parseFloat(val) || 0); }); },
-  setSavTarget(which, val) { stampTargets(t => { t[which] = val === "" ? "" : (parseFloat(val) || 0); }); },
+  setGroupTarget(key, val) { stampTargets(t => { t.groups[key] = val === "" ? "" : (parseFloat(val) || 0); }); patchBudgetLive(); },
+  setCatTarget(cat, val) { stampTargets(t => { t.cats[cat] = val === "" ? "" : (parseFloat(val) || 0); }); patchBudgetLive(); },
+  setSavTarget(val) { stampTargets(t => { t.savMonthly = val === "" ? "" : (parseFloat(val) || 0); }); patchSavingsLive(); },
   setAsset(key, val) {
     if (!data.assets) data.assets = {};
     data.assets[key] = val === "" ? "" : (parseFloat(val) || 0);
@@ -572,6 +653,16 @@ window.A = {
   },
 };
 
+function fallbackCopy(text, done) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); } catch (e) {}
+  ta.remove();
+  done();
+}
+
 function downloadFile(content, type, name) {
   const blob = new Blob([content], { type });
   const a = document.createElement("a");
@@ -580,7 +671,104 @@ function downloadFile(content, type, name) {
   a.click();
 }
 
+/* ---------------- charts ---------------- */
+function donutSVG(segs) {
+  const total = segs.reduce((s, x) => s + x.value, 0);
+  if (!total) return "";
+  const r = 50, cx = 75, cy = 75, circ = 2 * Math.PI * r;
+  let off = 0, circles = "";
+  segs.forEach(s => {
+    const frac = s.value / total;
+    circles += `<circle r="${r}" cx="${cx}" cy="${cy}" fill="none" stroke="${s.color}" stroke-width="24"
+      stroke-dasharray="${(frac * circ).toFixed(2)} ${circ.toFixed(2)}" stroke-dashoffset="${(-off * circ).toFixed(2)}"
+      transform="rotate(-90 ${cx} ${cy})"/>`;
+    off += frac;
+  });
+  return `<svg viewBox="0 0 150 150" width="140" height="140" style="flex-shrink:0">
+    ${circles}
+    <text x="75" y="71" text-anchor="middle" font-size="11" fill="#6E6E6E" font-family="Instrument Sans, sans-serif">Total</text>
+    <text x="75" y="89" text-anchor="middle" font-size="14" font-weight="600" fill="#111" font-family="IBM Plex Mono, monospace">${inrShort(total)}</text>
+  </svg>`;
+}
+
+function trendBarsSVG() {
+  const first = firstDataMonth();
+  const months = [];
+  let m = shiftMonth(state.ym, -11);
+  if (m < first) m = first;
+  while (m <= state.ym) { months.push(m); m = shiftMonth(m, 1); }
+  if (!months.length) months.push(state.ym);
+
+  const series = months.map(ym => ({ ym, spent: spentIn(ym), saved: savedIn(ym), salary: effSalary(ym) }));
+  const max = Math.max(1, ...series.map(s => Math.max(s.spent, s.saved, s.salary)));
+  const n = series.length;
+  const W = 340, H = 150, padL = 6, padB = 20, chartH = H - padB - 8;
+  const slot = (W - padL * 2) / n;
+  const barW = Math.max(6, Math.min(16, slot / 3));
+  const labelEvery = n > 8 ? 2 : 1;
+  let out = "";
+  series.forEach((s, i) => {
+    const x = padL + i * slot + slot / 2;
+    const hSpent = s.spent / max * chartH, hSaved = s.saved / max * chartH;
+    const ySal = 8 + chartH - (s.salary / max * chartH);
+    out += `<rect x="${(x - barW - 1).toFixed(1)}" y="${(8 + chartH - hSpent).toFixed(1)}" width="${barW}" height="${hSpent.toFixed(1)}" rx="2" fill="var(--c-spent)"/>`;
+    out += `<rect x="${(x + 1).toFixed(1)}" y="${(8 + chartH - hSaved).toFixed(1)}" width="${barW}" height="${hSaved.toFixed(1)}" rx="2" fill="var(--c-saved)"/>`;
+    if (s.salary > 0) out += `<line x1="${(x - barW - 3).toFixed(1)}" x2="${(x + barW + 3).toFixed(1)}" y1="${ySal.toFixed(1)}" y2="${ySal.toFixed(1)}" stroke="#111" stroke-width="1.4"/>`;
+    if (i % labelEvery === 0) out += `<text x="${x.toFixed(1)}" y="${H - 5}" text-anchor="middle" font-size="9" fill="#6E6E6E" font-family="Instrument Sans, sans-serif">${monthShort(s.ym)}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">${out}</svg>`;
+}
+
 /* ---------------- renderers ---------------- */
+function budgetLeftTiles() {
+  const salary = effSalary(state.ym);
+  const t = effTargets(state.ym);
+  const gSpend = groupSpendIn(state.ym);
+  const tiles = [];
+
+  GROUPS.forEach(g => {
+    const budget = groupBudgetIn(state.ym, g.key);
+    const spent = gSpend[g.key];
+    if (budget <= 0) {
+      tiles.push(`<div class="bucket-tile"><label>${g.short}</label><b>—</b><small>Set a % in Plan → Budget</small></div>`);
+      return;
+    }
+    const left = budget - spent;
+    const ratio = spent / budget;
+    const status = ratio > 1 ? "over" : ratio >= 0.85 ? "warn" : "ok";
+    const cum = groupCumBalance(g.key);
+    const barColor = status === "over" ? "var(--c-over)" : status === "warn" ? "var(--c-warn)" : GROUP_COLORS[g.key];
+    tiles.push(`
+      <div class="bucket-tile ${status}">
+        <label>${g.short}</label>
+        <b>${left >= 0 ? inrShort(left) + " left" : "Over by " + inrShort(-left)}</b>
+        <div class="tile-bar"><div style="width:${Math.min(ratio * 100, 100)}%;background:${barColor}"></div></div>
+        <small>${inrShort(spent)} of ${inrShort(budget)} (${(ratio * 100).toFixed(0)}%)</small>
+        ${cum < -0.5 ? `<small class="recover">↩ ${inrShort(-cum)} to recover</small>` : ""}
+      </div>`);
+  });
+
+  /* savings tile */
+  const savPct = Number(t.savMonthly) || 0;
+  const savTarget = salary * savPct / 100;
+  const invested = investedIn(state.ym);
+  if (savTarget > 0) {
+    const met = invested >= savTarget;
+    const ratio = invested / savTarget;
+    tiles.push(`
+      <div class="bucket-tile ${met ? "ok" : ""}">
+        <label>Saving</label>
+        <b style="${met ? "" : "color:var(--ink)"}">${met ? "Target met ✓" : inrShort(savTarget - invested) + " to invest"}</b>
+        <div class="tile-bar"><div style="width:${Math.min(ratio * 100, 100)}%;background:var(--c-saved)"></div></div>
+        <small>${inrShort(invested)} of ${inrShort(savTarget)} invested</small>
+      </div>`);
+  } else {
+    tiles.push(`<div class="bucket-tile"><label>Saving</label><b>—</b><small>Set a % in Plan → Savings</small></div>`);
+  }
+
+  return `<div class="stat-grid" style="margin-top:10px">${tiles.join("")}</div>`;
+}
+
 function renderDashboard() {
   const year = yearOf(state.ym);
   const A_ = annualStats(year);
@@ -610,19 +798,37 @@ function renderDashboard() {
       <span class="dl-val">${inrShort(s.value)}<small>${pctOf(s.value, A_.saved)}</small></span>
     </div>`).join("");
 
-  /* notes: show ONLY the selected type */
   const notes = (data.notes || []).filter(n => (n.type || "note") === state.noteType);
-  const noteItems = notes.map(n => `
-    <div class="note-item">
-      ${n.type === "todo"
-        ? `<input type="checkbox" ${n.done ? "checked" : ""} onchange="A.toggleNote('${n.id}')" />`
-        : `<span class="bullet">•</span>`}
-      <div style="flex:1">
-        <div class="note-text ${n.done ? "done" : ""}">${esc(n.text)}</div>
-        <div class="note-ts">${fmtTs(n.ts)}</div>
-      </div>
-      <button class="del-btn" onclick="A.deleteNote('${n.id}')" aria-label="Delete">×</button>
-    </div>`).join("");
+  const noteItems = notes.map(n => {
+    if (state.editingNote === n.id) {
+      return `
+        <div class="note-item">
+          <div style="flex:1">
+            <input type="text" id="note-edit-${n.id}" value="${esc(n.text)}" />
+            <div class="note-actions">
+              <button class="mini-btn" onclick="A.saveEditNote('${n.id}')" style="color:var(--ink)">Save</button>
+              <button class="mini-btn" onclick="A.cancelEditNote()">Cancel</button>
+            </div>
+          </div>
+        </div>`;
+    }
+    return `
+      <div class="note-item">
+        ${n.type === "todo"
+          ? `<input type="checkbox" ${n.done ? "checked" : ""} onchange="A.toggleNote('${n.id}')" />`
+          : `<span class="bullet">•</span>`}
+        <div style="flex:1">
+          <div class="note-text ${n.done ? "done" : ""}">${esc(n.text)}</div>
+          <div class="note-ts">${fmtTs(n.ts)}${n.edited ? " · edited" : ""}</div>
+          <div class="note-actions">
+            <button class="mini-btn" id="copy-${n.id}" onclick="A.copyNote('${n.id}')">Copy</button>
+            <button class="mini-btn" onclick="A.startEditNote('${n.id}')">Edit</button>
+            ${n.type === "note" ? `<button class="mini-btn" onclick="A.toggleNote('${n.id}')">${n.done ? "Unstrike" : "Strike"}</button>` : ""}
+            <button class="mini-btn" onclick="A.deleteNote('${n.id}')" style="color:var(--c-over)">Delete</button>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
 
   return `
     <div class="stat-grid">
@@ -630,6 +836,12 @@ function renderDashboard() {
       <div class="stat"><label>Earned ${monthShort(state.ym)}</label><b>${inr(salary)}</b><small>${year}${ytd}: ${inrShort(A_.earned)}</small></div>
       <div class="stat"><label>Spent ${monthShort(state.ym)}</label><b>${inr(spent)}</b><small>${year}${ytd}: ${inrShort(A_.spent)}</small></div>
       <div class="stat"><label>Saved ${monthShort(state.ym)}</label><b>${inr(saved)}</b><small>${year}${ytd}: ${inrShort(A_.saved)}</small></div>
+    </div>
+
+    <div class="card" style="padding:14px 16px">
+      <div class="card-head"><h3>Budget left — ${monthShort(state.ym)}</h3></div>
+      <div class="card-sub">Green under budget · yellow past 85% · red over. ↩ shows overflow from earlier months to recover.</div>
+      ${budgetLeftTiles()}
     </div>
 
     <div class="card">
@@ -656,7 +868,7 @@ function renderDashboard() {
 
     <div class="card">
       <div class="card-head"><h3>${year} at a glance${ytd}</h3></div>
-      <div class="card-sub">Earnings count only from your first recorded month (${monthLabel(firstDataMonth())}).</div>
+      <div class="card-sub">Counted from your first recorded month (${monthLabel(firstDataMonth())}).</div>
       <div class="card-body">
         <div class="mode-row"><span>Earned</span><span>${inr(A_.earned)}</span></div>
         <div class="mode-row"><span>Spent</span><span>${inr(A_.spent)}<small>${pctOf(A_.spent, A_.earned)} of earnings</small></span></div>
@@ -693,7 +905,7 @@ function renderDashboard() {
 
     <div class="card">
       <div class="card-head"><h3>Backup &amp; transfer</h3></div>
-      <div class="card-sub">Data lives on this device. To move it to your laptop (or back): download the backup file here, send it to the other device (AirDrop / email), open the app there and restore it.</div>
+      <div class="card-sub">Data lives on this device. To move it to your laptop (or back): download the backup, send it across (AirDrop / email), open the app there and restore.</div>
       <div class="card-body">
         <button class="primary-btn" style="margin-top:0" onclick="A.exportJSON()">Download full backup</button>
         <label class="primary-btn quiet-btn" style="display:block;text-align:center">
@@ -780,7 +992,6 @@ function renderExpenses() {
       </div>` : ""}`;
 }
 
-/* ---------------- Plan tab (merged Budget + Savings) ---------------- */
 function renderPlan() {
   const seg = state.planSeg;
   return `
@@ -791,6 +1002,13 @@ function renderPlan() {
       <button class="${seg === "corpus" ? "active" : ""}" onclick="A.setPlanSeg('corpus')">Corpus</button>
     </span>
     ${seg === "budget" ? renderPlanBudget() : seg === "savings" ? renderPlanSavings() : seg === "overall" ? renderPlanOverall() : renderPlanCorpus()}`;
+}
+
+function targetSourceNote() {
+  const src = targetsSource(state.ym);
+  if (src === "this") return `Targets set for ${monthLabel(state.ym)}.`;
+  if (src) return `Showing targets carried from ${monthLabel(src)} — edit any % to set them for ${monthLabel(state.ym)}.`;
+  return `No targets yet — set them below for ${monthLabel(state.ym)}.`;
 }
 
 function renderPlanBudget() {
@@ -808,6 +1026,7 @@ function renderPlanBudget() {
     const width = gAmt > 0 ? Math.min(actual / gAmt * 100, 100) : 0;
     const cats = data.categories.filter(c => groupOf(c) === g.key);
     const isOpen = state.openGroup === g.key;
+    const cum = groupCumBalance(g.key);
 
     const catRows = cats.map(c => {
       const cPct = Number((t.cats || {})[c]) || 0;
@@ -817,7 +1036,7 @@ function renderPlanBudget() {
       return `
         <div class="subcat-row">
           <span class="subcat-name">${esc(c)}</span>
-          <span class="subcat-calc">${cPct > 0 && gAmt > 0 ? "= " + inr(cAmt) : ""}</span>
+          <span class="subcat-calc" data-catcalc="${esc(c)}">${cPct > 0 && gAmt > 0 ? "= " + inr(cAmt) : ""}</span>
           <div class="pct-input">
             <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${(t.cats || {})[c] ?? ""}"
               oninput="A.setCatTarget('${esc(c)}', this.value)" onchange="A.refresh()" />
@@ -832,7 +1051,7 @@ function renderPlanBudget() {
     return `
       <div class="group-block">
         <div class="group-head">
-          <div class="group-name">${g.label}<small>${g.hint}</small></div>
+          <div class="group-name">${g.label}<small>${g.hint} · budget <span data-gbudget="${g.key}">${gAmt > 0 ? inr(gAmt) : "—"}</span></small></div>
           <div class="pct-input">
             <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${t.groups[g.key] ?? ""}"
               oninput="A.setGroupTarget('${g.key}', this.value)" onchange="A.refresh()" />
@@ -842,9 +1061,11 @@ function renderPlanBudget() {
         ${gPct > 0 && salary > 0 ? `
           <div class="cat-bar" style="margin-top:8px"><div style="width:${width}%;background:${over ? "var(--c-over)" : GROUP_COLORS[g.key]}"></div></div>
           <div class="target-detail">
-            <span>Budget: <b>${inr(gAmt)}</b> · Spent: <b>${inr(actual)}</b></span>
+            <span>Spent: <b>${inr(actual)}</b></span>
             <span style="${over ? "color:var(--c-over)" : ""}">${over ? "Over by " + inr(actual - gAmt) : inr(gAmt - actual) + " left"}</span>
           </div>` : `<div class="target-detail"><span>Spent: <b>${inr(actual)}</b></span><span>${salary > 0 ? "Set a %" : "Set salary first"}</span></div>`}
+        ${cum < -0.5 ? `<div class="recover-line">↩ Overflow: ${inr(-cum)} to recover from earlier months</div>` : ""}
+        <div class="alloc-line" data-alloc="${g.key}"></div>
         <button class="ghost-btn" style="margin-top:8px" onclick="A.setOpenGroup('${g.key}')">${isOpen ? "Hide" : "Set"} category splits (% of this budget)</button>
         ${isOpen ? `<div class="subcat">${catRows || '<p class="empty">No categories assigned to this group.</p>'}</div>` : ""}
       </div>`;
@@ -853,7 +1074,7 @@ function renderPlanBudget() {
   return `
     <div class="card">
       <div class="card-head"><h3>Salary — ${monthLabel(state.ym)}</h3></div>
-      <div class="card-sub">${explicit ? "Recorded for this month." : salary > 0 ? "Carried from your last entry — confirm or change it for this month." : "Enter this month's in-hand salary."} Each month keeps its own figure, so fluctuations are tracked correctly.</div>
+      <div class="card-sub">${explicit ? "Recorded for this month." : salary > 0 ? "Carried from your last entry — confirm or change it for this month." : "Enter this month's in-hand salary."}</div>
       <div class="card-body">
         <div class="row2">
           <input id="salary-in" class="mono" type="number" inputmode="decimal" placeholder="e.g. 300000" value="${explicit ? salary : ""}" />
@@ -864,8 +1085,8 @@ function renderPlanBudget() {
     </div>
 
     <div class="card">
-      <div class="card-head"><h3>Estimated monthly budget</h3></div>
-      <div class="card-sub">Set each area as a % of this month's salary${salary > 0 ? " (" + inr(salary) + ")" : ""}, then split it further by category — e.g. Living 30% = ${salary > 0 ? inr(salary * 0.3) : "₹—"}, and Rent at 50% of Living = ${salary > 0 ? inr(salary * 0.15) : "₹—"}. Targets carry forward each month until you change them.</div>
+      <div class="card-head"><h3>Estimated monthly budget — ${monthShort(state.ym)}</h3></div>
+      <div class="card-sub">${targetSourceNote()} Each area is a % of this month's salary${salary > 0 ? " (" + inr(salary) + ")" : ""}; category splits are a % of that area's budget. The allocation line under each area shows how much bandwidth you've assigned and what's still free.</div>
       <div class="card-body">${groupBlocks}</div>
     </div>
 
@@ -891,27 +1112,22 @@ function renderPlanSavings() {
   const salary = effSalary(state.ym);
   const year = yearOf(state.ym);
   const t = effTargets(state.ym);
-  const A_ = annualStats(year);
   const ms = data.savings[state.ym] || {};
   const annual = annualSavingsByBucket(year);
 
-  const mPct = Number(t.savMonthly) || 0;
-  const mAmt = salary * mPct / 100;
-  const mActual = savedTotal();
-  const mShort = mAmt > 0 && mActual < mAmt;
-
-  const aPct = Number(t.savAnnual) || 0;
-  const aAmt = A_.earned * aPct / 100;
-  const aActual = A_.saved;
-  const aShort = aAmt > 0 && aActual < aAmt;
+  const pct = Number(t.savMonthly) || 0;
+  const target = salary * pct / 100;
+  const invested = investedIn(state.ym);
+  const left = target - invested;
 
   const contribRows = SAVING_BUCKETS.map(b => {
     const v = ms[b.key];
     const has = Number(v) > 0;
+    const isInvest = INVEST_KEYS.includes(b.key);
     return `
       <div class="bucket-row">
         <div style="flex:1">
-          <div class="bucket-label">${b.label}</div>
+          <div class="bucket-label">${b.label}${isInvest ? "" : ' <span class="bucket-sub">(not counted in the estimate)</span>'}</div>
           <div class="bucket-sub">${salary > 0 && has ? pctOf(Number(v), salary) + " of salary · " : ""}${year}: ${inr(annual[b.key])}</div>
         </div>
         <input class="mono" type="number" inputmode="decimal" placeholder="0" value="${v ?? ""}"
@@ -921,46 +1137,31 @@ function renderPlanSavings() {
 
   return `
     <div class="card">
-      <div class="card-head"><h3>Estimated monthly savings</h3></div>
-      <div class="card-sub">Your savings targets as a % of income. They carry forward until you change them.</div>
+      <div class="card-head"><h3>Estimated monthly savings — ${monthShort(state.ym)}</h3></div>
+      <div class="card-sub">${targetSourceNote()} The estimate counts MF + Shares + RD + FD contributions automatically and shows what's left to invest this month.</div>
       <div class="card-body">
-        <div class="group-block">
+        <div class="group-block" style="margin-bottom:0">
           <div class="group-head">
             <div class="group-name">Monthly target<small>% of this month's salary${salary > 0 ? " (" + inr(salary) + ")" : ""}</small></div>
             <div class="pct-input">
               <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${t.savMonthly ?? ""}"
-                oninput="A.setSavTarget('savMonthly', this.value)" onchange="A.refresh()" />
+                oninput="A.setSavTarget(this.value)" onchange="A.refresh()" />
               <span>%</span>
             </div>
           </div>
-          ${mPct > 0 && salary > 0 ? `
-            <div class="cat-bar" style="margin-top:8px"><div style="width:${Math.min(mActual / mAmt * 100, 100)}%;background:${GROUP_COLORS.savings}"></div></div>
-            <div class="target-detail">
-              <span>Target: <b>${inr(mAmt)}</b> · Saved: <b>${inr(mActual)}</b></span>
-              <span>${mShort ? inr(mAmt - mActual) + " to go" : "Target met ✓"}</span>
-            </div>` : ""}
-        </div>
-        <div class="group-block" style="margin-bottom:0">
-          <div class="group-head">
-            <div class="group-name">Annual target<small>% of ${year} earnings so far (${inr(A_.earned)})</small></div>
-            <div class="pct-input">
-              <input class="mono" type="number" inputmode="decimal" placeholder="—" value="${t.savAnnual ?? ""}"
-                oninput="A.setSavTarget('savAnnual', this.value)" onchange="A.refresh()" />
-              <span>%</span>
-            </div>
+          <div class="cat-bar" style="margin-top:10px;height:10px">
+            <div id="sav-bar-fill" style="width:${target > 0 ? Math.min(invested / target * 100, 100) : 0}%;background:var(--c-saved)"></div>
           </div>
-          ${aPct > 0 && A_.earned > 0 ? `
-            <div class="cat-bar" style="margin-top:8px"><div style="width:${Math.min(aActual / aAmt * 100, 100)}%;background:${GROUP_COLORS.savings}"></div></div>
-            <div class="target-detail">
-              <span>Target: <b>${inr(aAmt)}</b> · Saved: <b>${inr(aActual)}</b></span>
-              <span>${aShort ? inr(aAmt - aActual) + " to go" : "Target met ✓"}</span>
-            </div>` : ""}
+          <div class="target-detail">
+            <span>Target: <b id="sav-target-amt">${target > 0 ? inr(target) : "—"}</b> · Invested: <b id="sav-invested">${inr(invested)}</b></span>
+            <span id="sav-left" style="${target > 0 && left <= 0 ? "color:var(--c-ok)" : ""}">${target > 0 ? (left > 0 ? inr(left) + " left to invest" : "Target met ✓" + (left < 0 ? " (+" + inr(-left) + " extra)" : "")) : ""}</span>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-head"><h3>This month's contributions</h3><span class="big-num">${inr(mActual)}</span></div>
+      <div class="card-head"><h3>This month's contributions</h3><span class="big-num">${inr(savedTotal())}</span></div>
       <div class="card-sub">What you actually put away in ${monthLabel(state.ym)}, per bucket. Saves as you type.</div>
       <div class="card-body">${contribRows}</div>
     </div>`;
@@ -980,13 +1181,11 @@ function renderPlanOverall() {
       <span class="entry-amt">${inr(annual[b.key])}<small style="color:var(--slate);font-family:'Instrument Sans',sans-serif;margin-left:6px">all-time ${inrShort(allTime[b.key])}</small></span>
     </div>`).join("");
 
-  /* month-wise history for the selected year */
   const histRows = yearMonths(year).slice().reverse().map(ym => {
     const v = savedIn(ym);
     return `<div class="mode-row"><span>${monthLabel(ym)}</span><span>${v > 0 ? inr(v) : "—"}</span></div>`;
   }).join("");
 
-  /* current holdings */
   const holdingRows = SAVING_BUCKETS.map(b => `
     <div class="bucket-row">
       <span class="bucket-label" style="font-weight:400">${b.label}</span>
@@ -1007,7 +1206,7 @@ function renderPlanOverall() {
 
     <div class="card">
       <div class="card-head"><h3>Current holdings</h3><span class="big-num" style="font-size:16px">${inr(corpusTotal)}</span></div>
-      <div class="card-sub">Present value of each bucket — update whenever you check your accounts. Feeds the Corpus view and your net worth.</div>
+      <div class="card-sub">Present value of each bucket — update whenever you check your accounts. Feeds Corpus and net worth.</div>
       <div class="card-body">${holdingRows}</div>
     </div>
 
@@ -1023,7 +1222,6 @@ function renderPlanCorpus() {
   const emergency = Number(c.bank) || 0;
   const investCorpus = (Number(c.mf) || 0) + (Number(c.shares) || 0) + (Number(c.rd) || 0) + (Number(c.fd) || 0);
 
-  /* built-in corpus rows: [label, sub, actualValue, isAuto, valueKey, goalKey] */
   const items = [
     { label: "Housing Fund", sub: "Set aside for a home", value: Number(a.housing) || 0, auto: false, vKey: "housing", gKey: "housingTarget", goal: a.housingTarget },
     { label: "Emergency Fund", sub: "Cash in Bank — auto from Overall", value: emergency, auto: true, gKey: "emergencyTarget", goal: a.emergencyTarget },
@@ -1118,6 +1316,8 @@ function render() {
 
   const noteNew = document.getElementById("note-new");
   if (noteNew) noteNew.addEventListener("keydown", e => { if (e.key === "Enter") A.addNote(); });
+
+  if (state.tab === "plan" && state.planSeg === "budget") patchBudgetLive();
 }
 
 render();
